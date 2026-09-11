@@ -1,0 +1,22 @@
+{
+    "name": "mwa",
+    "version": "0.1.0",
+    "type": "module",
+    "scripts": {
+        "build": "tsc",
+        "start": "tsc && node dist/main.js",
+        "dev": "node dev.ts",
+        "tsc-watch": "tsc --watch --preserveWatchOutput",
+        "format": "prettier --write .",
+        "lint": "tsc --noEmit && prettier --check ."
+    },
+    "devDependencies": {
+        "@types/node": "^22.20.2",
+        "prettier": "^3.9.6",
+        "typescript": "^7.0.2"
+    },
+    "dependencies": {
+        "preact": "^10.29.8",
+        "preact-render-to-string": "^6.7.0"
+    }
+}
