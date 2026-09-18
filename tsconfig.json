@@ -1,6 +1,5 @@
 {
     "compilerOptions": {
-        "allowJs": true,
         "checkJs": true,
         "target": "ES2020",
         "lib": ["ESNext"],
@@ -12,12 +11,12 @@
         "jsx": "react-jsx",
         "jsxImportSource": "preact",
         "sourceMap": true,
-        "outDir": "./dist",
+        "outDir": "dist",
         "rootDir": "./src",
         "paths": {
             "#src/*": ["./src/*"]
         }
     },
     "include": ["src/**/*"],
-    "exclude": []
+    "exclude": ["./dist/**/*"]
 }

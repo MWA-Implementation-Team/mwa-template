@@ -15,9 +15,6 @@ export default function Header() {
                 <li>
                     {!username ? <a href="/login">Login</a> : <a href="/dashboard">Dashboard ({username})</a>}
                 </li>
-                <li>
-                    <a href="/casino">Casino</a>
-                </li>
             </ul>
             <ThemeToggle />
         </nav>

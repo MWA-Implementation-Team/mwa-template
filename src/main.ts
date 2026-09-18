@@ -3,12 +3,10 @@ import { httpStatus, readCookies } from '#src/http.js';
 import { isDevMode } from '#src/state.js';
 import { createRouterHandler, endpoint, RequestContext, staticFileHandler, writeErrorPage } from '#src/router.js';
 import { publicNodeModules } from '#src/root.js';
-import { httpGetLogin, httpPostLogin } from '#src/pages/login.js';
-import { httpDashboardGet, httpDashboardPost } from '#src/pages/dashboard.js';
-import { httpCasinoGet } from '#src/pages/casino.js';
-import { httpHomeGet } from '#src/pages/home.js';
-import { ClientContext } from './client/context.js';
-import { cookieThemeOverride, cookieUsername } from './client/constants.js';
+import { httpGetLogin, httpPostLogin } from '#src/routes/login.js';
+import { httpDashboardCasinoGet, httpDashboardGet, httpDashboardPost } from '#src/routes/dashboard.js';
+import { httpHomeGet } from '#src/routes/home.js';
+import { cookieThemeOverride, cookieUsername } from '#src/client/constants.js';
 
 // Every handler in this array is ran for every http request,
 // until one of them sends a response. Otherwise, 404 is returned.
@@ -20,8 +18,7 @@ const rootHandler = createRouterHandler([
 
     endpoint('GET /dashboard', httpDashboardGet),
     endpoint('POST /dashboard', httpDashboardPost),
-
-    endpoint('GET /casino', httpCasinoGet),
+    endpoint('GET /dashboard/casino', httpDashboardCasinoGet),
 
     publicNodeModules,
     staticFileHandler('static'),

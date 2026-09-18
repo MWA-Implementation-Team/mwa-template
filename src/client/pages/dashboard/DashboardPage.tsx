@@ -19,6 +19,8 @@ function DashboardPage({ username }: DashboardPageProps) {
             <form method="POST">
                 <button type="submit">Logout</button>
             </form>
+
+            <a href="/dashboard/casino"><button>GO GAMBLING</button></a>
         </>
     );
 }

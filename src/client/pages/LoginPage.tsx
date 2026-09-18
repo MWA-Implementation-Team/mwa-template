@@ -16,7 +16,7 @@ function LoginPage({ errorMessage }: LoginPageProps) {
             <Header />
 
             <form method="POST">
-                <h1>Login with your account</h1>
+                <h1>Login with username</h1>
                 <input type="text" name="username" placeholder="Username" />
                 <button type="submit">Login</button>
 
