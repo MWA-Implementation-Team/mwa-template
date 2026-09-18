@@ -74,14 +74,22 @@ function stop() {
 process.on('SIGINT', stop);
 process.on('SIGTERM', stop);
 
+let jsRuntime = 'npm';
+if (process.versions.bun) {
+    jsRuntime = 'bun';
+// @ts-expect-error
+} else if (typeof Deno !== 'undefined') {
+    jsRuntime = 'deno';
+}
+
 try {
-    await exec('npm run build');
+    await exec(`${jsRuntime} run build`);
 } catch {
     // ignore build failure, tsc-watch will report it
 }
 startServer();
 
-tscWatcher = spawn('npm', ['run', 'tsc-watch'], { stdio: 'inherit' });
+tscWatcher = spawn(jsRuntime, ['run', 'tsc-watch'], { stdio: 'inherit' });
 
 let debounceId: NodeJS.Timeout;
 

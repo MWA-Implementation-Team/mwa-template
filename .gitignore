@@ -3,3 +3,4 @@
 /.direnv
 db.sqlite
 bun.lock
+deno.lock

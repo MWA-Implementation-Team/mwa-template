@@ -38,9 +38,9 @@ export const httpPostLogin: RequestHandler = async (ctx) => {
 
     const allowedGotos = new Set<string>(['/dashboard', '/dashboard/casino']);
 
-    let goto = url.searchParams.get('goto') ?? '';
-    if (!allowedGotos.has(goto)) {
-        goto = '';
+    let goto = url.searchParams.get('goto') ?? null;
+    if (goto && !allowedGotos.has(goto)) {
+        goto = null;
     }
     goto = goto ?? '/dashboard';
 
