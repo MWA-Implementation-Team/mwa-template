@@ -3,7 +3,7 @@ import { Page, RegisteredPageId, RegisteredPageProps, registeredPages } from '#s
 import { isDevMode } from '#src/state.js';
 import { getContentTypeForFile, httpStatus } from '#src/http.js';
 import { RequestHandler } from '#src/router.js';
-import { ClientContext, ClientContextType } from '#src/client/context.js';
+import { ClientContextWrapper, ClientContextWrapperInit } from '#src/client/context.js';
 
 export const publicNodeModules: RequestHandler = async ({ url, res }) => {
     const map: Record<string, string> = {
@@ -25,10 +25,10 @@ export const publicNodeModules: RequestHandler = async ({ url, res }) => {
 type RootProps<P extends RegisteredPageId> = {
     pageId: P;
     props: RegisteredPageProps<P>;
-    ctx: ClientContextType;
+    ctxInit: ClientContextWrapperInit;
 };
 
-export function Root<P extends RegisteredPageId>({ pageId, props, ctx }: RootProps<P>) {
+export function Root<P extends RegisteredPageId>({ pageId, props, ctxInit }: RootProps<P>) {
     // Instead of using a bundler, use the browser's native js module support for simplicity
     const imports = {
         imports: {
@@ -46,7 +46,7 @@ export function Root<P extends RegisteredPageId>({ pageId, props, ctx }: RootPro
 
     const Component = registeredPages[${JSON.stringify(pageId)}].Component;
     const content = createElement(Component, ${JSON.stringify(props)});
-    const wrapped = createElement(ClientContextWrapper, { value: ${JSON.stringify(ctx)}, content });
+    const wrapped = createElement(ClientContextWrapper, { init: ${JSON.stringify(ctxInit)}, content });
     hydrate(wrapped, document.getElementById('app'));
     `;
 
@@ -60,8 +60,8 @@ export function Root<P extends RegisteredPageId>({ pageId, props, ctx }: RootPro
     }
 
     let bodyStyle = undefined;
-    if (ctx.themeOverride) {
-        bodyStyle = `color-scheme: ${ctx.themeOverride === 'dark' ? 'dark' : 'light'};`;
+    if (ctxInit.themeOverride) {
+        bodyStyle = `color-scheme: ${ctxInit.themeOverride === 'dark' ? 'dark' : 'light'};`;
     }
 
     return (
@@ -82,9 +82,10 @@ export function Root<P extends RegisteredPageId>({ pageId, props, ctx }: RootPro
             </head>
             <body style={bodyStyle}>
                 <div id="app">
-                    <ClientContext value={ctx}>
-                        <page.Component {...(props as any)} />
-                    </ClientContext>
+                    <ClientContextWrapper
+                        init={ctxInit}
+                        content={<page.Component {...(props as any)} />}
+                    />
                 </div>
             </body>
         </html>

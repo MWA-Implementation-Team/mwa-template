@@ -16,7 +16,8 @@ import {
     httpDashboardPost,
 } from '#src/routes/dashboard.js';
 import { httpHomeGet } from '#src/routes/home.js';
-import { cookieThemeOverride, cookieUsername } from '#src/client/constants.js';
+import { cookieLanguage, cookieThemeOverride, cookieUsername } from '#src/client/constants.js';
+import { defaultLanguage, LanguageCode } from './client/language.js';
 
 // Every handler in this array is ran for every http request,
 // until one of them sends a response. Otherwise, 404 is returned.
@@ -44,16 +45,18 @@ const server = createServer(async (req, res) => {
         req,
         res,
         cookies: {},
-        clientContext: {
+        clientCtxInit: {
             themeOverride: null,
+            lang: defaultLanguage,
             username: null,
         },
     };
 
     try {
         ctx.cookies = readCookies(req);
-        ctx.clientContext = {
+        ctx.clientCtxInit = {
             themeOverride: ctx.cookies[cookieThemeOverride] ?? null,
+            lang: (ctx.cookies[cookieLanguage] as LanguageCode) ?? defaultLanguage, // not validated
             username: ctx.cookies[cookieUsername] ?? null,
         };
 

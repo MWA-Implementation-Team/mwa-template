@@ -1,26 +1,31 @@
 import { useContext } from 'preact/hooks';
 import { ClientContext } from '../context.js';
 import ThemeToggle from './ThemeToggle.js';
+import { t } from '../language.js';
+import LanguageToggle from './LanguageToggle.js';
 
 export default function Header() {
-    const { username } = useContext(ClientContext);
+    const { lang, username } = useContext(ClientContext);
 
     return (
         <nav>
             <img src="/Logotipas.png" style={'width:200px;'} />
             <ul>
                 <li>
-                    <a href="/">Home</a>
+                    <a href="/">{t(lang, 'headerHome')}</a>
                 </li>
                 <li>
                     {!username ? (
-                        <a href="/login">Login</a>
+                        <a href="/login">{t(lang, 'headerLogin')}</a>
                     ) : (
-                        <a href="/dashboard">Dashboard ({username})</a>
+                        <a href="/dashboard">
+                            {t(lang, 'headerDashboard')} ({username})
+                        </a>
                     )}
                 </li>
             </ul>
             <ThemeToggle />
+            <LanguageToggle />
         </nav>
     );
 }

@@ -4,7 +4,7 @@ import { IncomingMessage, ServerResponse } from 'http';
 import { OutgoingHttpHeaders } from 'http2';
 import { getContentTypeForFile, httpStatus } from '#src/http.js';
 import { RegisteredPageId, RegisteredPageProps } from './client/pages.js';
-import { ClientContextType } from './client/context.js';
+import { ClientContextType, ClientContextWrapperInit } from './client/context.js';
 import { Root } from './root.js';
 import { renderToString } from 'preact-render-to-string';
 import { isDevMode } from './state.js';
@@ -14,7 +14,7 @@ export type RequestContext = {
     req: IncomingMessage;
     res: ServerResponse;
     cookies: Record<string, string>;
-    clientContext: ClientContextType;
+    clientCtxInit: ClientContextWrapperInit;
 };
 
 export type RequestHandler = (ctx: RequestContext) => Promise<void>;
@@ -85,7 +85,7 @@ export function writePage<P extends RegisteredPageId>(args: {
     const root = Root({
         pageId: args.pageId,
         props: args.props,
-        ctx: args.ctx.clientContext,
+        ctxInit: args.ctx.clientCtxInit,
     });
 
     args.ctx.res.writeHead(args.status ?? httpStatus.ok, {
