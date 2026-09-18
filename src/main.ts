@@ -16,7 +16,7 @@ import {
     httpDashboardPost,
 } from '#src/routes/dashboard.js';
 import { httpHomeGet } from '#src/routes/home.js';
-import { cookieLanguage, cookieThemeOverride, cookieUsername } from '#src/client/constants.js';
+import { cookieLanguage, cookieUsername } from '#src/client/constants.js';
 import { defaultLanguage, LanguageCode } from './client/language.js';
 
 // Every handler in this array is ran for every http request,
