@@ -1,8 +1,7 @@
 import { readFile } from 'fs/promises';
 import { Page, RegisteredPageId, RegisteredPageProps, registeredPages } from './client/pages.js';
-import { RequestHandler } from './router.js';
 import { isDevMode } from './state.js';
-import { getContentTypeForFile, httpStatus } from './http.js';
+import { RequestHandler, getContentTypeForFile, httpStatus } from './http.js';
 
 export const publicNodeModules: RequestHandler = async ({ url, res }) => {
     const map: Record<string, string> = {

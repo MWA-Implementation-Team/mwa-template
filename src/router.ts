@@ -3,96 +3,21 @@ import path from 'path';
 import {
     getContentTypeForFile,
     httpStatus,
-    readCookies,
-    readFormData,
+    RequestHandler,
     writeErrorPage,
     writePage,
 } from './http.js';
 import { readFile } from 'fs/promises';
 import { publicNodeModules } from './root.js';
 import { isDevMode } from './state.js';
+import { httpGetLogin, httpPostLogin } from './pages/login.js';
+import { httpDashboardGet, httpDashboardPost } from './pages/dashboard.js';
+import { RegisteredPageId } from './client/pages.js';
 
-export type HttpContext = {
-    url: URL;
-    req: IncomingMessage;
-    res: ServerResponse;
-};
-
-export type RequestHandler = (ctx: HttpContext) => Promise<void>;
-
-const homepageHandler: RequestHandler = async ({ res }) => {
-    writePage({
-        res,
-        pageId: 'home',
-        props: {},
-    });
-};
-
-const httpGetLogin: RequestHandler = async ({ req, res }) => {
-    if ('username' in readCookies(req)) {
-        res.writeHead(httpStatus.seeOther, {
-            location: '/dashboard',
-        });
-        res.end();
-        return;
-    }
-
-    writePage({
-        res,
-        pageId: 'login',
-        props: {},
-    });
-};
-
-const httpPostLogin: RequestHandler = async ({ req, res }) => {
-    const form = await readFormData(req);
-    let username = form.get('username');
-    if (typeof username !== 'string' || username.trim() === '') {
-        writePage({
-            res,
-            pageId: 'login',
-            props: {
-                errorMessage: 'Invalid username',
-            },
-        });
-        return;
-    }
-
-    res.writeHead(httpStatus.seeOther, {
-        location: '/dashboard',
-        'set-cookie': `username=${encodeURIComponent(username)};`,
-    });
-    res.end();
-};
-
-const httpDashboardGet: RequestHandler = async ({ req, res }) => {
-    const cookies = readCookies(req);
-    const username = cookies['username'];
-    if (!username) {
-        res.writeHead(httpStatus.seeOther, {
-            location: '/login',
-        });
-        res.end();
-        return;
-    }
-
-    writePage({
-        res,
-        pageId: 'dashboard',
-        props: { username },
-    });
-};
-
-const httpDashboardPost: RequestHandler = async ({ res }) => {
-    res.writeHead(httpStatus.seeOther, {
-        location: '/login',
-        'set-cookie': `username=; Max-Age=0; Path=/`,
-    });
-    res.end();
-};
-
+// Every handler in this pipeline is ran for every http request,
+// until one of them sends a response. Otherwise, 404 is returned.
 const pipeline: RequestHandler = createPipeline([
-    endpoint('GET /', homepageHandler),
+    endpoint('GET /', staticPage('home')),
 
     endpoint('GET /login', httpGetLogin),
     endpoint('POST /login', httpPostLogin),
@@ -133,6 +58,16 @@ function endpoint(endpoint: string, inner: RequestHandler): RequestHandler {
             return;
         }
         await inner(ctx);
+    };
+}
+
+function staticPage(id: RegisteredPageId): RequestHandler {
+    return async ({ res }) => {
+        writePage({
+            res,
+            pageId: id,
+            props: {},
+        });
     };
 }
 
