@@ -1,13 +1,21 @@
+import { cookieThemeOverride } from "#src/client/constants.js";
+import { SunMoonIcon } from "./icons.js";
+
 export default function ThemeToggle() {
-    function toggleTheme(_e: any) {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const isDark =
-            currentTheme === 'dark' ||
-            (!currentTheme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    function click() {
+        let currentTheme = document.body.style.colorScheme;
+        if (!currentTheme) {
+            currentTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
 
-        document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
-
-        alert('You changed the theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.cookie = `${cookieThemeOverride}=${newTheme}`;
+        document.body.style.colorScheme = newTheme;
     }
-    return <button onClick={toggleTheme}></button>;
+
+    return (
+        <button onClick={click}>
+            <SunMoonIcon />
+        </button>
+    );
 }

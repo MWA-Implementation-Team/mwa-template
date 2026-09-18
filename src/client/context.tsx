@@ -2,10 +2,12 @@ import { createContext } from "preact";
 import { ReactNode } from "preact/compat";
 
 export type ClientContextType = {
+    themeOverride: string | null,
     username: string | null, // username if logged in, else null
 };
 
 export const ClientContext = createContext<ClientContextType>({
+    themeOverride: null,
     username: null,
 });
 

@@ -8,7 +8,7 @@ import { httpDashboardGet, httpDashboardPost } from '#src/pages/dashboard.js';
 import { httpCasinoGet } from '#src/pages/casino.js';
 import { httpHomeGet } from '#src/pages/home.js';
 import { ClientContext } from './client/context.js';
-import { cookieUsername } from './constants.js';
+import { cookieThemeOverride, cookieUsername } from './client/constants.js';
 
 // Every handler in this array is ran for every http request,
 // until one of them sends a response. Otherwise, 404 is returned.
@@ -38,6 +38,7 @@ const server = createServer(async (req, res) => {
         res,
         cookies: {},
         clientContext: {
+            themeOverride: null,
             username: null,
         },
     };
@@ -45,6 +46,7 @@ const server = createServer(async (req, res) => {
     try {
         ctx.cookies = readCookies(req);
         ctx.clientContext = {
+            themeOverride: ctx.cookies[cookieThemeOverride] ?? null,
             username: ctx.cookies[cookieUsername] ?? null,
         };
 

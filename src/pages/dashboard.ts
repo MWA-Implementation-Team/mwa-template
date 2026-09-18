@@ -1,4 +1,4 @@
-import { cookieUsername } from '#src/constants.js';
+import { cookieUsername } from '#src/client/constants.js';
 import { httpStatus, readCookies } from '#src/http.js';
 import { RequestHandler, writePage } from '#src/router.js';
 

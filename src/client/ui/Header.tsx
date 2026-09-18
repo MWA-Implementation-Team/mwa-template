@@ -1,5 +1,6 @@
 import { useContext } from "preact/hooks";
 import { ClientContext } from "../context.js";
+import ThemeToggle from "./ThemeToggle.js";
 
 export default function Header() {
     const { username } = useContext(ClientContext);
@@ -18,6 +19,7 @@ export default function Header() {
                     <a href="/casino">Casino</a>
                 </li>
             </ul>
+            <ThemeToggle />
         </nav>
     );
 }

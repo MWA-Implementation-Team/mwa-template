@@ -3,7 +3,7 @@ import { Page, RegisteredPageId, RegisteredPageProps, registeredPages } from '#s
 import { isDevMode } from '#src/state.js';
 import { getContentTypeForFile, httpStatus } from '#src/http.js';
 import { RequestHandler } from '#src/router.js';
-import { ClientContext, ClientContextType } from './client/context.js';
+import { ClientContext, ClientContextType } from '#src/client/context.js';
 
 export const publicNodeModules: RequestHandler = async ({ url, res }) => {
     const map: Record<string, string> = {
@@ -59,6 +59,11 @@ export function Root<P extends RegisteredPageId>({ pageId, props, ctx }: RootPro
         title = page.title(props);
     }
 
+    let bodyStyle = undefined;
+    if (ctx.themeOverride) {
+        bodyStyle = `color-scheme: ${ctx.themeOverride === 'dark' ? 'dark' : 'light'};`;
+    }
+
     return (
         <html>
             <head>
@@ -75,7 +80,7 @@ export function Root<P extends RegisteredPageId>({ pageId, props, ctx }: RootPro
                 <script src="/oat.js" defer />
                 {isDevMode && <script src="/reload.js" defer />}
             </head>
-            <body>
+            <body style={bodyStyle}>
                 <div id="app">
                     <ClientContext value={ctx}>
                         <page.Component {...(props as any)} />
