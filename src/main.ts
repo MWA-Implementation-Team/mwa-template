@@ -32,7 +32,7 @@ const rootHandler = createRouterHandler([
 
     publicNodeModules,
     staticFileHandler('static'),
-    staticFileHandler('dist'),
+    staticFileHandler('dist/client', '/client'),
 
     ...(isDevMode ? [staticFileHandler('src')] : []),
 ]);

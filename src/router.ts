@@ -47,13 +47,13 @@ export function endpoint(filter: string, inner: RequestHandler): RequestHandler 
     };
 }
 
-export function staticFileHandler(dir: string): RequestHandler {
+export function staticFileHandler(dir: string, prefix: string = '/'): RequestHandler {
     return async ({ url, req, res }) => {
-        if (req.method !== 'GET') {
+        if (req.method !== 'GET' || !url.pathname.startsWith(prefix)) {
             return;
         }
 
-        const relativePath = url.pathname.substring(1); // remove / in beginning
+        const relativePath = url.pathname.substring(prefix.length);
         const fullPath = path.join(dir, relativePath);
 
         let buf: Buffer;
