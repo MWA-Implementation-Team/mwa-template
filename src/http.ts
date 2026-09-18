@@ -1,4 +1,3 @@
-import { readFile } from 'fs/promises';
 import { IncomingMessage, ServerResponse } from 'http';
 import { renderToString } from 'preact-render-to-string';
 import { OutgoingHttpHeaders } from 'http2';
@@ -14,37 +13,16 @@ export const httpStatus = {
     internalServerError: 500,
 };
 
-export async function serveFile(res: ServerResponse, possiblePaths: string[]) {
-    let buf: Buffer | undefined;
-    let finalPath = '';
-    for (const p of possiblePaths) {
-        try {
-            buf = await readFile(p);
-            finalPath = p;
-            break;
-        } catch {
-            continue;
-        }
-    }
-
-    if (!buf) {
-        writeErrorPage(res, httpStatus.notFound);
-        return;
-    }
-
+export function getContentTypeForFile(name: string): string {
     let contentType = 'text/plain';
-    if (finalPath.endsWith('.js')) {
+    if (name.endsWith('.js')) {
         contentType = 'text/javascript';
-    } else if (finalPath.endsWith('.css')) {
+    } else if (name.endsWith('.css')) {
         contentType = 'text/css';
-    } else if (finalPath.endsWith('.png')) {
+    } else if (name.endsWith('.png')) {
         contentType = 'image/png';
     }
-
-    res.writeHead(httpStatus.ok, {
-        'Content-Type': contentType,
-    });
-    res.end(buf);
+    return contentType;
 }
 
 export function writePage<P extends RegisteredPageId>(args: {

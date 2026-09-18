@@ -1,11 +1,24 @@
+import { readFile } from 'fs/promises';
 import { Page, RegisteredPageId, RegisteredPageProps, registeredPages } from './client/pages.js';
+import { RequestHandler } from './router.js';
 import { isDevMode } from './state.js';
+import { getContentTypeForFile, httpStatus } from './http.js';
 
-export const publicNodeModules: Record<string, string> = {
-    '/preact.module.js': 'node_modules/preact/dist/preact.module.js',
-    '/preact-hooks.module.js': 'node_modules/preact/hooks/dist/hooks.module.js',
-    '/preact-jsx-runtime.module.js': 'node_modules/preact/jsx-runtime/dist/jsxRuntime.module.js',
-};
+export const publicNodeModules: RequestHandler = async ({ url, res }) => {
+    const map: Record<string, string> = {
+        '/preact.module.js': 'node_modules/preact/dist/preact.module.js',
+        '/preact-hooks.module.js': 'node_modules/preact/hooks/dist/hooks.module.js',
+        '/preact-jsx-runtime.module.js': 'node_modules/preact/jsx-runtime/dist/jsxRuntime.module.js',
+    };
+
+    if (url.pathname in map) {
+        const buf = await readFile(map[url.pathname]);
+        res.writeHead(httpStatus.ok, {
+            'Content-Type': getContentTypeForFile(url.pathname),
+        });
+        res.end(buf);
+    }
+}
 
 type RootProps<P extends RegisteredPageId> = {
     pageId: P;
