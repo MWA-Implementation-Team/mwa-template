@@ -26,9 +26,10 @@ type RootProps<P extends RegisteredPageId> = {
     pageId: P;
     props: RegisteredPageProps<P>;
     ctxInit: ClientContextWrapperInit;
+    themeOverride: string | null;
 };
 
-export function Root<P extends RegisteredPageId>({ pageId, props, ctxInit }: RootProps<P>) {
+export function Root<P extends RegisteredPageId>({ pageId, props, ctxInit, themeOverride }: RootProps<P>) {
     // Instead of using a bundler, use the browser's native js module support for simplicity
     const imports = {
         imports: {
@@ -60,8 +61,8 @@ export function Root<P extends RegisteredPageId>({ pageId, props, ctxInit }: Roo
     }
 
     let bodyStyle = undefined;
-    if (ctxInit.themeOverride) {
-        bodyStyle = `color-scheme: ${ctxInit.themeOverride === 'dark' ? 'dark' : 'light'};`;
+    if (themeOverride) {
+        bodyStyle = `color-scheme: ${themeOverride === 'dark' ? 'dark' : 'light'};`;
     }
 
     return (

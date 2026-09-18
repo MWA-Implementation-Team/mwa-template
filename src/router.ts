@@ -4,10 +4,11 @@ import { IncomingMessage, ServerResponse } from 'http';
 import { OutgoingHttpHeaders } from 'http2';
 import { getContentTypeForFile, httpStatus } from '#src/http.js';
 import { RegisteredPageId, RegisteredPageProps } from './client/pages.js';
-import { ClientContextType, ClientContextWrapperInit } from './client/context.js';
+import { ClientContextWrapperInit } from './client/context.js';
 import { Root } from './root.js';
 import { renderToString } from 'preact-render-to-string';
 import { isDevMode } from './state.js';
+import { cookieThemeOverride } from './client/constants.js';
 
 export type RequestContext = {
     url: URL;
@@ -86,6 +87,7 @@ export function writePage<P extends RegisteredPageId>(args: {
         pageId: args.pageId,
         props: args.props,
         ctxInit: args.ctx.clientCtxInit,
+        themeOverride: args.ctx.cookies[cookieThemeOverride] ?? null,
     });
 
     args.ctx.res.writeHead(args.status ?? httpStatus.ok, {

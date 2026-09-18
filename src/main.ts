@@ -46,7 +46,6 @@ const server = createServer(async (req, res) => {
         res,
         cookies: {},
         clientCtxInit: {
-            themeOverride: null,
             lang: defaultLanguage,
             username: null,
         },
@@ -55,7 +54,6 @@ const server = createServer(async (req, res) => {
     try {
         ctx.cookies = readCookies(req);
         ctx.clientCtxInit = {
-            themeOverride: ctx.cookies[cookieThemeOverride] ?? null,
             lang: (ctx.cookies[cookieLanguage] as LanguageCode) ?? defaultLanguage, // not validated
             username: ctx.cookies[cookieUsername] ?? null,
         };
