@@ -83,7 +83,7 @@ process.on('SIGTERM', stop);
 let jsRuntime = 'npm';
 if (process.versions.bun) {
     jsRuntime = 'bun';
-// @ts-expect-error
+    // @ts-expect-error
 } else if (typeof Deno !== 'undefined') {
     jsRuntime = 'deno';
 }
