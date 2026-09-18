@@ -12,8 +12,8 @@ export type RequestContext = {
     url: URL;
     req: IncomingMessage;
     res: ServerResponse;
-    cookies: Record<string, string>,
-    clientContext: ClientContextType,
+    cookies: Record<string, string>;
+    clientContext: ClientContextType;
 };
 
 export type RequestHandler = (ctx: RequestContext) => Promise<void>;
@@ -71,7 +71,7 @@ export function staticFileHandler(dir: string): RequestHandler {
 }
 
 export function writePage<P extends RegisteredPageId>(args: {
-    ctx: RequestContext,
+    ctx: RequestContext;
     pageId: P;
     props: RegisteredPageProps<P>;
     extraHeaders?: OutgoingHttpHeaders;

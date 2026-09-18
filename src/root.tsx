@@ -25,7 +25,7 @@ export const publicNodeModules: RequestHandler = async ({ url, res }) => {
 type RootProps<P extends RegisteredPageId> = {
     pageId: P;
     props: RegisteredPageProps<P>;
-    ctx: ClientContextType,
+    ctx: ClientContextType;
 };
 
 export function Root<P extends RegisteredPageId>({ pageId, props, ctx }: RootProps<P>) {

@@ -1,11 +1,13 @@
-import { cookieThemeOverride } from "#src/client/constants.js";
-import { SunMoonIcon } from "./icons.js";
+import { cookieThemeOverride } from '#src/client/constants.js';
+import { SunMoonIcon } from './icons.js';
 
 export default function ThemeToggle() {
     function click() {
         let currentTheme = document.body.style.colorScheme;
         if (!currentTheme) {
-            currentTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            currentTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light';
         }
 
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';

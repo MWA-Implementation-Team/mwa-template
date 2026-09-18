@@ -1,9 +1,9 @@
-import { createContext } from "preact";
-import { ReactNode } from "preact/compat";
+import { createContext } from 'preact';
+import { ReactNode } from 'preact/compat';
 
 export type ClientContextType = {
-    themeOverride: string | null,
-    username: string | null, // username if logged in, else null
+    themeOverride: string | null;
+    username: string | null; // username if logged in, else null
 };
 
 export const ClientContext = createContext<ClientContextType>({
@@ -14,16 +14,14 @@ export const ClientContext = createContext<ClientContextType>({
 // ---
 
 export type ClientContextWrapperProps = {
-    value: ClientContextType,
-    content: ReactNode,
+    value: ClientContextType;
+    content: ReactNode;
 };
 
 export function ClientContextWrapper({ value, content }: ClientContextWrapperProps) {
     return (
         <>
-            <ClientContext value={value}>
-                {content}
-            </ClientContext>
+            <ClientContext value={value}>{content}</ClientContext>
         </>
     );
 }

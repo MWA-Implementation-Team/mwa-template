@@ -20,7 +20,9 @@ function DashboardPage({ username }: DashboardPageProps) {
                 <button type="submit">Logout</button>
             </form>
 
-            <a href="/dashboard/casino"><button>GO GAMBLING</button></a>
+            <a href="/dashboard/casino">
+                <button>GO GAMBLING</button>
+            </a>
         </>
     );
 }
