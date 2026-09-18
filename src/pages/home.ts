@@ -1,5 +1,6 @@
 import { getVisitCount, markVisit } from "../database.js";
-import { RequestHandler, writePage } from "../http.js";
+import { writePage } from "../http.js";
+import { RequestHandler } from "../router.js";
 
 export const httpHomeGet: RequestHandler = async ({ res }) => {
     markVisit();

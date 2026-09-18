@@ -13,14 +13,6 @@ export const httpStatus = {
     internalServerError: 500,
 };
 
-export type HttpContext = {
-    url: URL;
-    req: IncomingMessage;
-    res: ServerResponse;
-};
-
-export type RequestHandler = (ctx: HttpContext) => Promise<void>;
-
 export function getContentTypeForFile(name: string): string {
     let contentType = 'text/plain';
     if (name.endsWith('.js')) {

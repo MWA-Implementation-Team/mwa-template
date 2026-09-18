@@ -1,8 +1,9 @@
-import { RequestHandler, httpStatus, readCookies, writePage } from "../http.js";
+import { httpStatus, readCookies, writePage } from "../http.js";
+import { RequestHandler } from "../router.js";
 
 export const httpDashboardGet: RequestHandler = async ({ req, res }) => {
     const cookies = readCookies(req);
-    const username = cookies['username'];
+    const username = cookies['mwa-username'];
     if (!username) {
         res.writeHead(httpStatus.seeOther, {
             location: '/login',
@@ -21,7 +22,7 @@ export const httpDashboardGet: RequestHandler = async ({ req, res }) => {
 export const httpDashboardPost: RequestHandler = async ({ res }) => {
     res.writeHead(httpStatus.seeOther, {
         location: '/login',
-        'set-cookie': `username=; Max-Age=0; Path=/`,
+        'set-cookie': `mwa-username=; Max-Age=0; Path=/`,
     });
     res.end();
 };

@@ -1,7 +1,8 @@
-import { RequestHandler, httpStatus, readCookies, readFormData, writePage } from "../http.js";
+import { httpStatus, readCookies, readFormData, writePage } from "../http.js";
+import { RequestHandler } from "../router.js";
 
 export const httpGetLogin: RequestHandler = async ({ req, res }) => {
-    if ('username' in readCookies(req)) {
+    if ('mwa-username' in readCookies(req)) {
         res.writeHead(httpStatus.seeOther, {
             location: '/dashboard',
         });
@@ -32,7 +33,7 @@ export const httpPostLogin: RequestHandler = async ({ req, res }) => {
 
     res.writeHead(httpStatus.seeOther, {
         location: '/dashboard',
-        'set-cookie': `username=${encodeURIComponent(username)};`,
+        'set-cookie': `mwa-username=${encodeURIComponent(username)};`,
     });
     res.end();
 };

@@ -1,42 +1,20 @@
-import { IncomingMessage, ServerResponse } from 'http';
 import path from 'path';
 import {
     getContentTypeForFile,
     httpStatus,
-    RequestHandler,
-    writeErrorPage,
-    writePage,
 } from './http.js';
 import { readFile } from 'fs/promises';
-import { publicNodeModules } from './root.js';
-import { isDevMode } from './state.js';
-import { httpGetLogin, httpPostLogin } from './pages/login.js';
-import { httpDashboardGet, httpDashboardPost } from './pages/dashboard.js';
-import { RegisteredPageId } from './client/pages.js';
-import { httpCasinoGet } from './pages/casino.js';
-import { httpHomeGet } from './pages/home.js';
+import { IncomingMessage, ServerResponse } from 'http';
 
-// Every handler in this pipeline is ran for every http request,
-// until one of them sends a response. Otherwise, 404 is returned.
-const httpPipeline = createPipeline([
-    endpoint('GET /', httpHomeGet),
+export type HttpContext = {
+    url: URL;
+    req: IncomingMessage;
+    res: ServerResponse;
+};
 
-    endpoint('GET /login', httpGetLogin),
-    endpoint('POST /login', httpPostLogin),
+export type RequestHandler = (ctx: HttpContext) => Promise<void>;
 
-    endpoint('GET /dashboard', httpDashboardGet),
-    endpoint('POST /dashboard', httpDashboardPost),
-
-    endpoint('GET /casino', httpCasinoGet),
-
-    publicNodeModules,
-    staticFileHandler('static'),
-    staticFileHandler('dist'),
-
-    ...(isDevMode ? [staticFileHandler('src')] : []),
-]);
-
-function createPipeline(handlers: RequestHandler[]): RequestHandler {
+export function createRouterHandler(handlers: RequestHandler[]): RequestHandler {
     return async (ctx) => {
         for (const handler of handlers) {
             await handler(ctx);
@@ -47,8 +25,8 @@ function createPipeline(handlers: RequestHandler[]): RequestHandler {
     };
 }
 
-function endpoint(endpoint: string, inner: RequestHandler): RequestHandler {
-    const parts = endpoint.split(' ');
+export function endpoint(filter: string, inner: RequestHandler): RequestHandler {
+    const parts = filter.split(' ');
     if (parts.length > 3) throw new Error('invalid endpoint');
 
     const method = parts.length === 2 ? parts[0] : '';
@@ -65,17 +43,7 @@ function endpoint(endpoint: string, inner: RequestHandler): RequestHandler {
     };
 }
 
-function staticPage(id: RegisteredPageId): RequestHandler {
-    return async ({ res }) => {
-        writePage({
-            res,
-            pageId: id,
-            props: {},
-        });
-    };
-}
-
-function staticFileHandler(dir: string): RequestHandler {
+export function staticFileHandler(dir: string): RequestHandler {
     return async ({ url, req, res }) => {
         if (req.method !== 'GET') {
             return;
@@ -98,11 +66,3 @@ function staticFileHandler(dir: string): RequestHandler {
     };
 }
 
-export async function handleRequest(req: IncomingMessage, res: ServerResponse) {
-    const url = new URL(`http://${process.env.HOST ?? 'localhost'}${req.url}`);
-    await httpPipeline({ url, req, res });
-
-    if (!res.writableEnded) {
-        writeErrorPage(res, httpStatus.notFound);
-    }
-}
