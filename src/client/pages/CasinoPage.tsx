@@ -12,8 +12,6 @@ export const casinoPage: Page<CasinoPageProps> = {
 function CasinoPage({}: CasinoPageProps) {
     return (
         <>
-            <Header />
-
             <RollComponent />
         </>
     );
