@@ -1,4 +1,4 @@
-import { Page } from '../pages.js';
+import { Page } from '#src/client/pages.js';
 
 type ErrorPageProps = {
     status: number;

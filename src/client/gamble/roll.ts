@@ -3,8 +3,8 @@
  * you get the win rate based on range value, then 1- Edge / rv
  */
 
-import Alea from '../rng/alea.js';
-import { HOUSE_EDGE } from './constants.js';
+import Alea from '#src/client/rng/alea.js';
+import { HOUSE_EDGE } from '#src/client/gamble/constants.js';
 
 export interface RollRequest {
     ammount: number;

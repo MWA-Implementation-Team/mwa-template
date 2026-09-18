@@ -1,8 +1,8 @@
 import { IncomingMessage, ServerResponse } from 'http';
 import { renderToString } from 'preact-render-to-string';
 import { OutgoingHttpHeaders } from 'http2';
-import { Root } from './root.js';
-import { RegisteredPageId, RegisteredPageProps } from './client/pages.js';
+import { Root } from '#src/root.js';
+import { RegisteredPageId, RegisteredPageProps } from '#src/client/pages.js';
 
 // define statuses on demand
 export const httpStatus = {

@@ -13,7 +13,10 @@
         "jsxImportSource": "preact",
         "sourceMap": true,
         "outDir": "./dist",
-        "rootDir": "./src"
+        "rootDir": "./src",
+        "paths": {
+            "#src/*": ["./src/*"]
+        }
     },
     "include": ["src/**/*"],
     "exclude": []

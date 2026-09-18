@@ -1,4 +1,4 @@
-import Mash from './mash.js';
+import Mash from '#src/client/rng/mash.js';
 
 export type AleaState = readonly [s0: number, s1: number, s2: number, c: number];
 

@@ -1,6 +1,6 @@
 import { useState } from 'preact/hooks';
-import { Roll, RollMode } from '../js/gamble/roll.js';
-import { HOUSE_EDGE } from '../js/gamble/constants.js';
+import { Roll, RollMode } from '#src/client/gamble/roll.js';
+import { HOUSE_EDGE } from '#src/client/gamble/constants.js';
 
 export default function RollComponent() {
     const [ammount, setAmmount] = useState(0);

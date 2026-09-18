@@ -1,4 +1,4 @@
-import { database } from "./state.js";
+import { database } from '#src/state.js';
 
 database.exec(`
 CREATE TABLE IF NOT EXISTS visits (

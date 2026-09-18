@@ -1,8 +1,8 @@
 import { readFile } from 'fs/promises';
-import { Page, RegisteredPageId, RegisteredPageProps, registeredPages } from './client/pages.js';
-import { isDevMode } from './state.js';
-import { getContentTypeForFile, httpStatus } from './http.js';
-import { RequestHandler } from './router.js';
+import { Page, RegisteredPageId, RegisteredPageProps, registeredPages } from '#src/client/pages.js';
+import { isDevMode } from '#src/state.js';
+import { getContentTypeForFile, httpStatus } from '#src/http.js';
+import { RequestHandler } from '#src/router.js';
 
 export const publicNodeModules: RequestHandler = async ({ url, res }) => {
     const map: Record<string, string> = {
@@ -30,6 +30,7 @@ export function Root<P extends RegisteredPageId>({ pageId, props }: RootProps<P>
     // Instead of using a bundler, use the browser's native js module support for simplicity
     const imports = {
         imports: {
+            '#src/': '/',
             preact: '/preact.module.js',
             'preact/hooks': '/preact-hooks.module.js',
             'preact/jsx-runtime': '/preact-jsx-runtime.module.js',
@@ -38,7 +39,7 @@ export function Root<P extends RegisteredPageId>({ pageId, props }: RootProps<P>
 
     const ssrHydrateScript = `
     import { h, hydrate } from 'preact';
-    import { registeredPages } from './client/pages.js';
+    import { registeredPages } from '#src/client/pages.js';
 
     const Component = registeredPages[${JSON.stringify(pageId)}].Component;
     hydrate(h(Component, ${JSON.stringify(props)}), document.getElementById('app'));

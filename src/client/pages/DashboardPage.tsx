@@ -1,5 +1,5 @@
-import Header from '../ui/Header.js';
-import { Page } from '../pages.js';
+import Header from '#src/client/ui/Header.js';
+import { Page } from '#src/client/pages.js';
 
 type DashboardPageProps = {
     username: string;

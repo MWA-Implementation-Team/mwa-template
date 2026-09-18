@@ -1,5 +1,5 @@
-import { httpStatus, readCookies, writePage } from "../http.js";
-import { RequestHandler } from "../router.js";
+import { httpStatus, readCookies, writePage } from '#src/http.js';
+import { RequestHandler } from '#src/router.js';
 
 export const httpDashboardGet: RequestHandler = async ({ req, res }) => {
     const cookies = readCookies(req);
@@ -26,4 +26,3 @@ export const httpDashboardPost: RequestHandler = async ({ res }) => {
     });
     res.end();
 };
-

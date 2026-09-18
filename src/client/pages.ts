@@ -1,9 +1,9 @@
 import { ComponentProps, ComponentType } from 'preact/compat';
-import { dashboardPage } from './pages/DashboardPage.js';
-import { errorPage } from './pages/ErrorPage.js';
-import { homePage } from './pages/HomePage.js';
-import { loginPage } from './pages/LoginPage.js';
-import { casinoPage } from './pages/CasinoPage.js';
+import { dashboardPage } from '#src/client/pages/DashboardPage.js';
+import { errorPage } from '#src/client/pages/ErrorPage.js';
+import { homePage } from '#src/client/pages/HomePage.js';
+import { loginPage } from '#src/client/pages/LoginPage.js';
+import { casinoPage } from '#src/client/pages/CasinoPage.js';
 
 export type Page<P> = {
     Component: ComponentType<P>;

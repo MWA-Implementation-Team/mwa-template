@@ -1,12 +1,12 @@
 import { createServer } from 'http';
-import { httpStatus, writeErrorPage } from './http.js';
-import { isDevMode } from './state.js';
-import { createRouterHandler, endpoint, staticFileHandler } from './router.js';
-import { publicNodeModules } from './root.js';
-import { httpGetLogin, httpPostLogin } from './pages/login.js';
-import { httpDashboardGet, httpDashboardPost } from './pages/dashboard.js';
-import { httpCasinoGet } from './pages/casino.js';
-import { httpHomeGet } from './pages/home.js';
+import { httpStatus, writeErrorPage } from '#src/http.js';
+import { isDevMode } from '#src/state.js';
+import { createRouterHandler, endpoint, staticFileHandler } from '#src/router.js';
+import { publicNodeModules } from '#src/root.js';
+import { httpGetLogin, httpPostLogin } from '#src/pages/login.js';
+import { httpDashboardGet, httpDashboardPost } from '#src/pages/dashboard.js';
+import { httpCasinoGet } from '#src/pages/casino.js';
+import { httpHomeGet } from '#src/pages/home.js';
 
 // Every handler in this array is ran for every http request,
 // until one of them sends a response. Otherwise, 404 is returned.

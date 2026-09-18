@@ -1,10 +1,7 @@
 import path from 'path';
-import {
-    getContentTypeForFile,
-    httpStatus,
-} from './http.js';
 import { readFile } from 'fs/promises';
 import { IncomingMessage, ServerResponse } from 'http';
+import { getContentTypeForFile, httpStatus } from '#src/http.js';
 
 export type HttpContext = {
     url: URL;
@@ -65,4 +62,3 @@ export function staticFileHandler(dir: string): RequestHandler {
         res.end(buf);
     };
 }
-

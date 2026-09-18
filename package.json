@@ -2,6 +2,9 @@
     "name": "mwa",
     "version": "0.1.0",
     "type": "module",
+    "imports": {
+        "#src/*": "./dist/*"
+    },
     "scripts": {
         "build": "tsc",
         "start": "tsc && node dist/main.js",

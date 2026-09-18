@@ -1,5 +1,5 @@
-import { httpStatus, readCookies, readFormData, writePage } from "../http.js";
-import { RequestHandler } from "../router.js";
+import { httpStatus, readCookies, readFormData, writePage } from '#src/http.js';
+import { RequestHandler } from '#src/router.js';
 
 export const httpGetLogin: RequestHandler = async ({ req, res }) => {
     if ('mwa-username' in readCookies(req)) {
@@ -37,4 +37,3 @@ export const httpPostLogin: RequestHandler = async ({ req, res }) => {
     });
     res.end();
 };
-

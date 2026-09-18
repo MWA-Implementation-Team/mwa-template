@@ -2,7 +2,7 @@
 
 ## Development
 
-You need Node.js v24. Install it on your computer.
+We use Node.js v24 for development. Make sure you have it installed, not an older version:
 
 ```shell
 $ node --version

@@ -1,6 +1,5 @@
-import Header from '../ui/Header.js';
-import { Page } from '../pages.js';
-import RollComponent from '../ui/Roll.js';
+import { Page } from '#src/client/pages.js';
+import RollComponent from '#src/client/ui/Roll.js';
 
 type CasinoPageProps = {};
 
