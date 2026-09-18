@@ -15,11 +15,11 @@ export const httpStatus = {
 };
 
 export async function serveFile(res: ServerResponse, possiblePaths: string[]) {
-    let js: string | undefined;
+    let buf: Buffer | undefined;
     let finalPath = '';
     for (const p of possiblePaths) {
         try {
-            js = (await readFile(p)).toString();
+            buf = await readFile(p);
             finalPath = p;
             break;
         } catch {
@@ -27,7 +27,7 @@ export async function serveFile(res: ServerResponse, possiblePaths: string[]) {
         }
     }
 
-    if (!js) {
+    if (!buf) {
         writeErrorPage(res, httpStatus.notFound);
         return;
     }
@@ -44,7 +44,7 @@ export async function serveFile(res: ServerResponse, possiblePaths: string[]) {
     res.writeHead(httpStatus.ok, {
         'Content-Type': contentType,
     });
-    res.end(js);
+    res.end(buf);
 }
 
 export function writePage<P extends RegisteredPageId>(args: {
