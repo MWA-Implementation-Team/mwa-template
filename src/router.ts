@@ -14,11 +14,12 @@ import { httpGetLogin, httpPostLogin } from './pages/login.js';
 import { httpDashboardGet, httpDashboardPost } from './pages/dashboard.js';
 import { RegisteredPageId } from './client/pages.js';
 import { httpCasinoGet } from './pages/casino.js';
+import { httpHomeGet } from './pages/home.js';
 
 // Every handler in this pipeline is ran for every http request,
 // until one of them sends a response. Otherwise, 404 is returned.
 const httpPipeline = createPipeline([
-    endpoint('GET /', staticPage('home')),
+    endpoint('GET /', httpHomeGet),
 
     endpoint('GET /login', httpGetLogin),
     endpoint('POST /login', httpPostLogin),
