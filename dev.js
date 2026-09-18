@@ -2,13 +2,17 @@
 // and restarts it when any changes are detected, reloading any
 // browser tabs that have the site open.
 
+// This file is written in JS instead of TS for older Node versions
+// which can't run TS files natively.
+
 import { spawn, exec as execCallback, ChildProcess } from 'child_process';
 import { watch } from 'fs';
 import { promisify } from 'util';
 import { createServer, ServerResponse } from 'http';
 const exec = promisify(execCallback);
 
-const connectedWatchers: ServerResponse[] = [];
+/** @type {ServerResponse[]} */
+const connectedWatchers = [];
 
 const reloadServer = createServer((req, res) => {
     if (req.url !== '/watch') {
@@ -40,8 +44,10 @@ function broadcastReload() {
     }
 }
 
-let tscWatcher: ChildProcess;
-let server: ChildProcess;
+/** @type {ChildProcess} */
+let tscWatcher;
+/** @type {ChildProcess} */
+let server;
 
 function startServer() {
     const child = spawn('node', ['./dist/main.js', '--dev'], {
@@ -53,7 +59,7 @@ function startServer() {
 
     let isServerRunning = false;
     let buffer = '';
-    child.stdout.on('data', (chunk: Buffer) => {
+    child.stdout.on('data', (/** @type {Buffer} */ chunk) => {
         if (isServerRunning) return;
         buffer += chunk.toString();
         if (buffer.includes('Server running')) {
@@ -91,7 +97,8 @@ startServer();
 
 tscWatcher = spawn(jsRuntime, ['run', 'tsc-watch'], { stdio: 'inherit' });
 
-let debounceId: NodeJS.Timeout;
+/** @type {NodeJS.Timeout} */
+let debounceId;
 
 watch('dist', { recursive: true }, () => {
     if (debounceId) {
@@ -100,7 +107,7 @@ watch('dist', { recursive: true }, () => {
     debounceId = setTimeout(async () => {
         console.log('[dev] Restarting...');
         if (server) {
-            await new Promise<void>((resolve) => {
+            await new Promise((resolve) => {
                 server.once('exit', () => resolve());
                 server.kill('SIGTERM');
             });
