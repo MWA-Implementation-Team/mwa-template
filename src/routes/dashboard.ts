@@ -3,13 +3,12 @@ import { httpStatus } from '#src/http.js';
 import { RequestContext, RequestHandler, writePage } from '#src/router.js';
 
 export const httpDashboardGet: RequestHandler = async (ctx) => {
-    const username = ensureLoggedIn(ctx);
-    if (!username) return;
+    if (!ensureLoggedIn(ctx)) return;
 
     writePage({
         ctx,
         pageId: 'dashboard',
-        props: { username },
+        props: {},
     });
 };
 
@@ -31,11 +30,11 @@ export const httpDashboardCasinoGet: RequestHandler = async (ctx) => {
     });
 };
 
-function ensureLoggedIn({ res, cookies }: RequestContext): string | null {
+function ensureLoggedIn({ url, res, cookies }: RequestContext): string | null {
     const username = cookies[cookieUsername];
     if (!username) {
         res.writeHead(httpStatus.seeOther, {
-            location: '/login',
+            location: `/login?goto=${encodeURIComponent(url.pathname)}`,
         });
         res.end();
         return null;

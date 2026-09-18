@@ -1,16 +1,18 @@
 import Header from '#src/client/ui/Header.js';
 import { Page } from '#src/client/pages.js';
+import { useContext } from 'preact/hooks';
+import { ClientContext } from '#src/client/context.js';
 
-type DashboardPageProps = {
-    username: string;
-};
+type DashboardPageProps = {};
 
 export const dashboardPage: Page<DashboardPageProps> = {
     Component: DashboardPage,
     title: 'MWA | Dashboard',
 };
 
-function DashboardPage({ username }: DashboardPageProps) {
+function DashboardPage({}: DashboardPageProps) {
+    const { username } = useContext(ClientContext);
+
     return (
         <>
             <Header />

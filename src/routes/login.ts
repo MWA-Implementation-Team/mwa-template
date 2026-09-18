@@ -21,7 +21,7 @@ export const httpGetLogin: RequestHandler = async (ctx) => {
 };
 
 export const httpPostLogin: RequestHandler = async (ctx) => {
-    const { req, res } = ctx;
+    const { url, req, res } = ctx;
 
     const form = await readFormData(req);
     let username = form.get('username');
@@ -36,8 +36,16 @@ export const httpPostLogin: RequestHandler = async (ctx) => {
         return;
     }
 
+    const allowedGotos = new Set<string>(['/dashboard', '/dashboard/casino']);
+
+    let goto = url.searchParams.get('goto') ?? '';
+    if (!allowedGotos.has(goto)) {
+        goto = '';
+    }
+    goto = goto ?? '/dashboard';
+
     res.writeHead(httpStatus.seeOther, {
-        location: '/dashboard',
+        location: goto,
         'set-cookie': `${cookieUsername}=${encodeURIComponent(username)};`,
     });
     res.end();
