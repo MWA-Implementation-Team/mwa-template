@@ -29,7 +29,12 @@ type RootProps<P extends RegisteredPageId> = {
     themeOverride: string | null;
 };
 
-export function Root<P extends RegisteredPageId>({ pageId, props, ctxInit, themeOverride }: RootProps<P>) {
+export function Root<P extends RegisteredPageId>({
+    pageId,
+    props,
+    ctxInit,
+    themeOverride,
+}: RootProps<P>) {
     // Instead of using a bundler, use the browser's native js module support for simplicity
     const imports = {
         imports: {
