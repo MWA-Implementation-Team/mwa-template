@@ -4,7 +4,7 @@
  */
 
 //import Alea from '#src/client/rng/alea.js';
-import { HOUSE_EDGE } from '#src/client/gamble/constants.js';
+import { HOUSE_EDGE } from '#src/client/constants.js';
 
 export interface RollRequest {
     ammount: number;

@@ -1,11 +1,11 @@
 import { cookieUsername } from '#src/client/constants.js';
-import { httpStatus, readCookies, readFormData } from '#src/http.js';
+import { httpStatus, readFormData } from '#src/http.js';
 import { RequestHandler, writePage } from '#src/router.js';
 
 export const httpGetLogin: RequestHandler = async (ctx) => {
-    const { req, res } = ctx;
+    const { res, cookies } = ctx;
 
-    if (cookieUsername in readCookies(req)) {
+    if (cookieUsername in cookies) {
         res.writeHead(httpStatus.seeOther, {
             location: '/dashboard',
         });

@@ -35,7 +35,7 @@ const rootHandler = createRouterHandler([
     staticFileHandler('static'),
     staticFileHandler('dist/client', '/client'),
 
-    ...(isDevMode ? [staticFileHandler('src')] : []),
+    ...(isDevMode ? [staticFileHandler('src', '/src')] : []),
 ]);
 
 const server = createServer(async (req, res) => {
