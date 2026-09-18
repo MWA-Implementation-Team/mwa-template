@@ -2,3 +2,4 @@
 /dist
 /.direnv
 db.sqlite
+bun.lock
