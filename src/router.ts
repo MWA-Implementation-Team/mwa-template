@@ -13,10 +13,11 @@ import { isDevMode } from './state.js';
 import { httpGetLogin, httpPostLogin } from './pages/login.js';
 import { httpDashboardGet, httpDashboardPost } from './pages/dashboard.js';
 import { RegisteredPageId } from './client/pages.js';
+import { httpCasinoGet } from './pages/casino.js';
 
 // Every handler in this pipeline is ran for every http request,
 // until one of them sends a response. Otherwise, 404 is returned.
-const pipeline: RequestHandler = createPipeline([
+const httpPipeline = createPipeline([
     endpoint('GET /', staticPage('home')),
 
     endpoint('GET /login', httpGetLogin),
@@ -24,6 +25,8 @@ const pipeline: RequestHandler = createPipeline([
 
     endpoint('GET /dashboard', httpDashboardGet),
     endpoint('POST /dashboard', httpDashboardPost),
+
+    endpoint('GET /casino', httpCasinoGet),
 
     publicNodeModules,
     staticFileHandler('static'),
@@ -96,7 +99,7 @@ function staticFileHandler(dir: string): RequestHandler {
 
 export async function handleRequest(req: IncomingMessage, res: ServerResponse) {
     const url = new URL(`http://${process.env.HOST ?? 'localhost'}${req.url}`);
-    await pipeline({ url, req, res });
+    await httpPipeline({ url, req, res });
 
     if (!res.writableEnded) {
         writeErrorPage(res, httpStatus.notFound);

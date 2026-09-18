@@ -12,6 +12,8 @@ function HomePage({}: HomePageProps) {
     return (
         <>
             <Header />
+
+            <h1>MWA Event</h1>
         </>
     );
 }

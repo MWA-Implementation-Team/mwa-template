@@ -2,14 +2,14 @@ import Header from '../ui/Header.js';
 import { Page } from '../pages.js';
 import RollComponent from '../ui/Roll.js';
 
-type HomePageProps = {};
+type CasinoPageProps = {};
 
-export const homePage: Page<HomePageProps> = {
-    Component: HomePage,
-    title: 'MWA | Home',
+export const casinoPage: Page<CasinoPageProps> = {
+    Component: CasinoPage,
+    title: 'MWA | Casino',
 };
 
-function HomePage({}: HomePageProps) {
+function CasinoPage({}: CasinoPageProps) {
     return (
         <>
             <Header />

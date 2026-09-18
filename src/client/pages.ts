@@ -3,6 +3,7 @@ import { dashboardPage } from './pages/DashboardPage.js';
 import { errorPage } from './pages/ErrorPage.js';
 import { homePage } from './pages/HomePage.js';
 import { loginPage } from './pages/LoginPage.js';
+import { casinoPage } from './pages/CasinoPage.js';
 
 export type Page<P> = {
     Component: ComponentType<P>;
@@ -13,6 +14,7 @@ export const registeredPages = {
     home: homePage,
     login: loginPage,
     dashboard: dashboardPage,
+    casino: casinoPage,
     error: errorPage,
 } satisfies Record<string, Page<any>>;
 
