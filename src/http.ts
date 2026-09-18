@@ -1,15 +1,12 @@
-import { IncomingMessage, ServerResponse } from 'http';
-import { renderToString } from 'preact-render-to-string';
-import { OutgoingHttpHeaders } from 'http2';
-import { Root } from '#src/root.js';
-import { RegisteredPageId, RegisteredPageProps } from '#src/client/pages.js';
+// Generic http related utilities.
+
+import { IncomingMessage } from 'http';
 
 // define statuses on demand
 export const httpStatus = {
     ok: 200,
     seeOther: 303,
     notFound: 404,
-    methodNotAllowed: 405,
     internalServerError: 500,
 };
 
@@ -23,34 +20,6 @@ export function getContentTypeForFile(name: string): string {
         contentType = 'image/png';
     }
     return contentType;
-}
-
-export function writePage<P extends RegisteredPageId>(args: {
-    res: ServerResponse;
-    pageId: P;
-    props: RegisteredPageProps<P>;
-    extraHeaders?: OutgoingHttpHeaders;
-    status?: number;
-}) {
-    const root = Root({
-        pageId: args.pageId,
-        props: args.props,
-    });
-
-    args.res.writeHead(args.status ?? httpStatus.ok, {
-        'Content-Type': 'text/html',
-        ...(args.extraHeaders ?? {}),
-    });
-    args.res.end('<!DOCTYPE html>' + renderToString(root));
-}
-
-export function writeErrorPage(res: ServerResponse, status: number) {
-    writePage({
-        res,
-        pageId: 'error',
-        props: { status },
-        status,
-    });
 }
 
 export async function readFormData(req: IncomingMessage): Promise<FormData> {

@@ -1,15 +1,22 @@
 import path from 'path';
 import { readFile } from 'fs/promises';
 import { IncomingMessage, ServerResponse } from 'http';
+import { OutgoingHttpHeaders } from 'http2';
 import { getContentTypeForFile, httpStatus } from '#src/http.js';
+import { RegisteredPageId, RegisteredPageProps } from './client/pages.js';
+import { ClientContextType } from './client/context.js';
+import { Root } from './root.js';
+import { renderToString } from 'preact-render-to-string';
 
-export type HttpContext = {
+export type RequestContext = {
     url: URL;
     req: IncomingMessage;
     res: ServerResponse;
+    cookies: Record<string, string>,
+    clientContext: ClientContextType,
 };
 
-export type RequestHandler = (ctx: HttpContext) => Promise<void>;
+export type RequestHandler = (ctx: RequestContext) => Promise<void>;
 
 export function createRouterHandler(handlers: RequestHandler[]): RequestHandler {
     return async (ctx) => {
@@ -61,4 +68,33 @@ export function staticFileHandler(dir: string): RequestHandler {
         });
         res.end(buf);
     };
+}
+
+export function writePage<P extends RegisteredPageId>(args: {
+    ctx: RequestContext,
+    pageId: P;
+    props: RegisteredPageProps<P>;
+    extraHeaders?: OutgoingHttpHeaders;
+    status?: number;
+}) {
+    const root = Root({
+        pageId: args.pageId,
+        props: args.props,
+        ctx: args.ctx.clientContext,
+    });
+
+    args.ctx.res.writeHead(args.status ?? httpStatus.ok, {
+        'Content-Type': 'text/html',
+        ...(args.extraHeaders ?? {}),
+    });
+    args.ctx.res.end('<!DOCTYPE html>' + renderToString(root));
+}
+
+export function writeErrorPage(ctx: RequestContext, status: number) {
+    writePage({
+        ctx,
+        pageId: 'error',
+        props: { status },
+        status,
+    });
 }

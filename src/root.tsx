@@ -3,6 +3,7 @@ import { Page, RegisteredPageId, RegisteredPageProps, registeredPages } from '#s
 import { isDevMode } from '#src/state.js';
 import { getContentTypeForFile, httpStatus } from '#src/http.js';
 import { RequestHandler } from '#src/router.js';
+import { ClientContext, ClientContextType } from './client/context.js';
 
 export const publicNodeModules: RequestHandler = async ({ url, res }) => {
     const map: Record<string, string> = {
@@ -24,9 +25,10 @@ export const publicNodeModules: RequestHandler = async ({ url, res }) => {
 type RootProps<P extends RegisteredPageId> = {
     pageId: P;
     props: RegisteredPageProps<P>;
+    ctx: ClientContextType,
 };
 
-export function Root<P extends RegisteredPageId>({ pageId, props }: RootProps<P>) {
+export function Root<P extends RegisteredPageId>({ pageId, props, ctx }: RootProps<P>) {
     // Instead of using a bundler, use the browser's native js module support for simplicity
     const imports = {
         imports: {
@@ -38,11 +40,14 @@ export function Root<P extends RegisteredPageId>({ pageId, props }: RootProps<P>
     };
 
     const ssrHydrateScript = `
-    import { h, hydrate } from 'preact';
+    import { createElement, hydrate } from 'preact';
     import { registeredPages } from '#src/client/pages.js';
+    import { ClientContextWrapper } from '#src/client/context.js';
 
     const Component = registeredPages[${JSON.stringify(pageId)}].Component;
-    hydrate(h(Component, ${JSON.stringify(props)}), document.getElementById('app'));
+    const content = createElement(Component, ${JSON.stringify(props)});
+    const wrapped = createElement(ClientContextWrapper, { value: ${JSON.stringify(ctx)}, content });
+    hydrate(wrapped, document.getElementById('app'));
     `;
 
     const page = registeredPages[pageId] as Page<RegisteredPageProps<P>>;
@@ -72,7 +77,9 @@ export function Root<P extends RegisteredPageId>({ pageId, props }: RootProps<P>
             </head>
             <body>
                 <div id="app">
-                    <page.Component {...(props as any)} />
+                    <ClientContext value={ctx}>
+                        <page.Component {...(props as any)} />
+                    </ClientContext>
                 </div>
             </body>
         </html>

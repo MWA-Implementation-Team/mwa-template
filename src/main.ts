@@ -1,12 +1,14 @@
 import { createServer } from 'http';
-import { httpStatus, writeErrorPage } from '#src/http.js';
+import { httpStatus, readCookies } from '#src/http.js';
 import { isDevMode } from '#src/state.js';
-import { createRouterHandler, endpoint, staticFileHandler } from '#src/router.js';
+import { createRouterHandler, endpoint, RequestContext, staticFileHandler, writeErrorPage } from '#src/router.js';
 import { publicNodeModules } from '#src/root.js';
 import { httpGetLogin, httpPostLogin } from '#src/pages/login.js';
 import { httpDashboardGet, httpDashboardPost } from '#src/pages/dashboard.js';
 import { httpCasinoGet } from '#src/pages/casino.js';
 import { httpHomeGet } from '#src/pages/home.js';
+import { ClientContext } from './client/context.js';
+import { cookieUsername } from './constants.js';
 
 // Every handler in this array is ran for every http request,
 // until one of them sends a response. Otherwise, 404 is returned.
@@ -29,16 +31,31 @@ const rootHandler = createRouterHandler([
 ]);
 
 const server = createServer(async (req, res) => {
+    const url = new URL(`http://${process.env.HOST ?? 'localhost'}${req.url}`);
+    const ctx: RequestContext = {
+        url,
+        req,
+        res,
+        cookies: {},
+        clientContext: {
+            username: null,
+        },
+    };
+
     try {
-        const url = new URL(`http://${process.env.HOST ?? 'localhost'}${req.url}`);
-        await rootHandler({ url, req, res });
+        ctx.cookies = readCookies(req);
+        ctx.clientContext = {
+            username: ctx.cookies[cookieUsername] ?? null,
+        };
+
+        await rootHandler(ctx);
 
         if (!res.writableEnded) {
-            writeErrorPage(res, httpStatus.notFound);
+            writeErrorPage(ctx, httpStatus.notFound);
         }
     } catch (err) {
         console.error('Error during request', err);
-        writeErrorPage(res, httpStatus.internalServerError);
+        writeErrorPage(ctx, httpStatus.internalServerError);
     }
 });
 

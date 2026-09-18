@@ -1,4 +1,9 @@
+import { useContext } from "preact/hooks";
+import { ClientContext } from "../context.js";
+
 export default function Header() {
+    const { username } = useContext(ClientContext);
+
     return (
         <nav>
             <img src="/Logotipas.png" style={'width:200px;'} />
@@ -7,7 +12,7 @@ export default function Header() {
                     <a href="/">Home</a>
                 </li>
                 <li>
-                    <a href="/login">Login</a>
+                    {!username ? <a href="/login">Login</a> : <a href="/dashboard">Dashboard ({username})</a>}
                 </li>
                 <li>
                     <a href="/casino">Casino</a>

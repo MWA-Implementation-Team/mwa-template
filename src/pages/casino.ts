@@ -1,9 +1,8 @@
-import { writePage } from '#src/http.js';
-import { RequestHandler } from '#src/router.js';
+import { RequestHandler, writePage } from '#src/router.js';
 
-export const httpCasinoGet: RequestHandler = async ({ res }) => {
+export const httpCasinoGet: RequestHandler = async (ctx) => {
     writePage({
-        res,
+        ctx,
         pageId: 'casino',
         props: {},
     });

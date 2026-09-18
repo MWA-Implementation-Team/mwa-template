@@ -5,18 +5,19 @@ import { homePage } from '#src/client/pages/HomePage.js';
 import { loginPage } from '#src/client/pages/LoginPage.js';
 import { casinoPage } from '#src/client/pages/CasinoPage.js';
 
-export type Page<P> = {
-    Component: ComponentType<P>;
-    title: string | ((props: P) => string);
-};
-
 export const registeredPages = {
+    // These keys are used in the writePage function
     home: homePage,
     login: loginPage,
     dashboard: dashboardPage,
     casino: casinoPage,
     error: errorPage,
 } satisfies Record<string, Page<any>>;
+
+export type Page<P> = {
+    Component: ComponentType<P>;
+    title: string | ((props: P) => string);
+};
 
 export type RegisteredPageId = keyof typeof registeredPages;
 

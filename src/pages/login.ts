@@ -1,8 +1,11 @@
-import { httpStatus, readCookies, readFormData, writePage } from '#src/http.js';
-import { RequestHandler } from '#src/router.js';
+import { cookieUsername } from '#src/constants.js';
+import { httpStatus, readCookies, readFormData } from '#src/http.js';
+import { RequestHandler, writePage } from '#src/router.js';
 
-export const httpGetLogin: RequestHandler = async ({ req, res }) => {
-    if ('mwa-username' in readCookies(req)) {
+export const httpGetLogin: RequestHandler = async (ctx) => {
+    const { req, res } = ctx;
+
+    if (cookieUsername in readCookies(req)) {
         res.writeHead(httpStatus.seeOther, {
             location: '/dashboard',
         });
@@ -11,18 +14,20 @@ export const httpGetLogin: RequestHandler = async ({ req, res }) => {
     }
 
     writePage({
-        res,
+        ctx,
         pageId: 'login',
         props: {},
     });
 };
 
-export const httpPostLogin: RequestHandler = async ({ req, res }) => {
+export const httpPostLogin: RequestHandler = async (ctx) => {
+    const { req, res } = ctx;
+
     const form = await readFormData(req);
     let username = form.get('username');
     if (typeof username !== 'string' || username.trim() === '') {
         writePage({
-            res,
+            ctx,
             pageId: 'login',
             props: {
                 errorMessage: 'Invalid username',
@@ -33,7 +38,7 @@ export const httpPostLogin: RequestHandler = async ({ req, res }) => {
 
     res.writeHead(httpStatus.seeOther, {
         location: '/dashboard',
-        'set-cookie': `mwa-username=${encodeURIComponent(username)};`,
+        'set-cookie': `${cookieUsername}=${encodeURIComponent(username)};`,
     });
     res.end();
 };
