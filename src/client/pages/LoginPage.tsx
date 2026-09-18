@@ -1,4 +1,4 @@
-import Header from '../components/Header.js';
+import Header from '../ui/Header.js';
 import { Page } from '../pages.js';
 
 type LoginPageProps = {

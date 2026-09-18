@@ -8,7 +8,8 @@ export const publicNodeModules: RequestHandler = async ({ url, res }) => {
     const map: Record<string, string> = {
         '/preact.module.js': 'node_modules/preact/dist/preact.module.js',
         '/preact-hooks.module.js': 'node_modules/preact/hooks/dist/hooks.module.js',
-        '/preact-jsx-runtime.module.js': 'node_modules/preact/jsx-runtime/dist/jsxRuntime.module.js',
+        '/preact-jsx-runtime.module.js':
+            'node_modules/preact/jsx-runtime/dist/jsxRuntime.module.js',
     };
 
     if (url.pathname in map) {
@@ -18,7 +19,7 @@ export const publicNodeModules: RequestHandler = async ({ url, res }) => {
         });
         res.end(buf);
     }
-}
+};
 
 type RootProps<P extends RegisteredPageId> = {
     pageId: P;

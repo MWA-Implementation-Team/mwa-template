@@ -10,6 +10,7 @@ import {
 } from './http.js';
 import { readFile } from 'fs/promises';
 import { publicNodeModules } from './root.js';
+import { isDevMode } from './state.js';
 
 export type HttpContext = {
     url: URL;
@@ -19,108 +20,91 @@ export type HttpContext = {
 
 export type RequestHandler = (ctx: HttpContext) => Promise<void>;
 
-const homepageHandler: RequestHandler = async ({ url, res }) => {
-    if (url.pathname === '/') {
+const homepageHandler: RequestHandler = async ({ res }) => {
+    writePage({
+        res,
+        pageId: 'home',
+        props: {},
+    });
+};
+
+const httpGetLogin: RequestHandler = async ({ req, res }) => {
+    if ('username' in readCookies(req)) {
+        res.writeHead(httpStatus.seeOther, {
+            location: '/dashboard',
+        });
+        res.end();
+        return;
+    }
+
+    writePage({
+        res,
+        pageId: 'login',
+        props: {},
+    });
+};
+
+const httpPostLogin: RequestHandler = async ({ req, res }) => {
+    const form = await readFormData(req);
+    let username = form.get('username');
+    if (typeof username !== 'string' || username.trim() === '') {
         writePage({
             res,
-            pageId: 'home',
-            props: {},
+            pageId: 'login',
+            props: {
+                errorMessage: 'Invalid username',
+            },
         });
-    }
-};
-
-const loginHandler: RequestHandler = async ({ url, req, res }) => {
-    if (url.pathname !== '/login') {
         return;
     }
 
-    switch (req.method) {
-        case 'GET':
-           if ('username' in readCookies(req)) {
-                res.writeHead(httpStatus.seeOther, {
-                    location: '/dashboard',
-                });
-                res.end();
-                return;
-            }
-
-            writePage({
-                res,
-                pageId: 'login',
-                props: {},
-            });
-            return;
-        case 'POST':
-            const form = await readFormData(req);
-            let username = form.get('username');
-            if (typeof username !== 'string' || username.trim() === '') {
-                writePage({
-                    res,
-                    pageId: 'login',
-                    props: {
-                        errorMessage: 'Invalid username',
-                    },
-                });
-                return;
-            }
-
-            res.writeHead(httpStatus.seeOther, {
-                location: '/dashboard',
-                'set-cookie': `username=${encodeURIComponent(username)};`,
-            });
-            res.end();
-
-            return;
-        default:
-            writeErrorPage(res, httpStatus.methodNotAllowed);
-            return;
-    }
+    res.writeHead(httpStatus.seeOther, {
+        location: '/dashboard',
+        'set-cookie': `username=${encodeURIComponent(username)};`,
+    });
+    res.end();
 };
 
-const dashboardHandler: RequestHandler = async ({ url, req, res }) => {
-    if (url.pathname !== '/dashboard') {
+const httpDashboardGet: RequestHandler = async ({ req, res }) => {
+    const cookies = readCookies(req);
+    const username = cookies['username'];
+    if (!username) {
+        res.writeHead(httpStatus.seeOther, {
+            location: '/login',
+        });
+        res.end();
         return;
     }
 
-    switch (req.method) {
-        case 'GET':
-            const cookies = readCookies(req);
-            const username = cookies['username'];
-            if (!username) {
-                res.writeHead(httpStatus.seeOther, {
-                    location: '/login',
-                });
-                res.end();
-                return;
-            }
+    writePage({
+        res,
+        pageId: 'dashboard',
+        props: { username },
+    });
+};
 
-            writePage({
-                res,
-                pageId: 'dashboard',
-                props: { username },
-            });
-            return;
-        case 'POST':
-            res.writeHead(httpStatus.seeOther, {
-                location: '/login',
-                'set-cookie': `username=; Max-Age=0; Path=/`,
-            });
-            res.end();
-            return;
-        default:
-            writeErrorPage(res, httpStatus.methodNotAllowed);
-            return;
-    }
+const httpDashboardPost: RequestHandler = async ({ res }) => {
+    res.writeHead(httpStatus.seeOther, {
+        location: '/login',
+        'set-cookie': `username=; Max-Age=0; Path=/`,
+    });
+    res.end();
 };
 
 const pipeline: RequestHandler = createPipeline([
-    homepageHandler,
-    loginHandler,
-    dashboardHandler,
+    endpoint('GET /', homepageHandler),
+
+    endpoint('GET /login', httpGetLogin),
+    endpoint('POST /login', httpPostLogin),
+
+    endpoint('GET /dashboard', httpDashboardGet),
+    endpoint('POST /dashboard', httpDashboardPost),
 
     publicNodeModules,
     staticFileHandler('static'),
     staticFileHandler('dist'),
+
+    ...(isDevMode ? [staticFileHandler('src')] : []),
 ]);
 
 function createPipeline(handlers: RequestHandler[]): RequestHandler {
@@ -131,6 +115,24 @@ function createPipeline(handlers: RequestHandler[]): RequestHandler {
                 break;
             }
         }
+    };
+}
+
+function endpoint(endpoint: string, inner: RequestHandler): RequestHandler {
+    const parts = endpoint.split(' ');
+    if (parts.length > 3) throw new Error('invalid endpoint');
+
+    const method = parts.length === 2 ? parts[0] : '';
+    const pathname = parts[parts.length - 1];
+
+    return async (ctx) => {
+        if (method !== '' && ctx.req.method !== method) {
+            return;
+        }
+        if (ctx.url.pathname !== pathname) {
+            return;
+        }
+        await inner(ctx);
     };
 }
 
@@ -145,7 +147,6 @@ function staticFileHandler(dir: string): RequestHandler {
 
         let buf: Buffer;
         try {
-            console.log(fullPath);
             buf = await readFile(fullPath);
         } catch {
             return; // file doesn't exist

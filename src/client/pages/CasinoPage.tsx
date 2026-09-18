@@ -1,5 +1,6 @@
 import Header from '../ui/Header.js';
 import { Page } from '../pages.js';
+import RollComponent from '../ui/Roll.js';
 
 type HomePageProps = {};
 
@@ -12,6 +13,8 @@ function HomePage({}: HomePageProps) {
     return (
         <>
             <Header />
+
+            <RollComponent />
         </>
     );
 }
