@@ -7,6 +7,7 @@ import { RegisteredPageId, RegisteredPageProps } from './client/pages.js';
 import { ClientContextType } from './client/context.js';
 import { Root } from './root.js';
 import { renderToString } from 'preact-render-to-string';
+import { isDevMode } from './state.js';
 
 export type RequestContext = {
     url: URL;
@@ -50,6 +51,10 @@ export function endpoint(filter: string, inner: RequestHandler): RequestHandler 
 export function staticFileHandler(dir: string, prefix: string = '/'): RequestHandler {
     return async ({ url, req, res }) => {
         if (req.method !== 'GET' || !url.pathname.startsWith(prefix)) {
+            return;
+        }
+
+        if (!isDevMode && url.pathname.toLowerCase().endsWith('.js.map')) {
             return;
         }
 

@@ -68,6 +68,8 @@ const server = createServer(async (req, res) => {
     }
 });
 
+process.on('SIGINT', () => server.close());
+
 server.listen(3000, () => {
     let msg = 'Server running at http://localhost:3000/';
     if (isDevMode) {
