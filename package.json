@@ -11,7 +11,7 @@
         "dev": "node dev.ts",
         "tsc-watch": "tsc --watch --preserveWatchOutput",
         "format": "prettier --write .",
-        "lint": "tsc --noEmit && prettier --check ."
+        "lint": "tsc --noEmit --noUnusedLocals --noUnusedParameters && prettier --check ."
     },
     "devDependencies": {
         "@types/node": "^22.20.3",
