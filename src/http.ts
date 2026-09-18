@@ -37,6 +37,8 @@ export async function serveFile(res: ServerResponse, possiblePaths: string[]) {
         contentType = 'text/javascript';
     } else if (finalPath.endsWith('.css')) {
         contentType = 'text/css';
+    } else if (finalPath.endsWith('.png')) {
+        contentType = 'image/png';
     }
 
     res.writeHead(httpStatus.ok, {
