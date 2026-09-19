@@ -7,7 +7,7 @@ export const httpGetLogin: RequestHandler = async (ctx) => {
 
     if (cookieUsername in cookies) {
         res.writeHead(httpStatus.seeOther, {
-            location: '/dashboard',
+            location: '/app',
         });
         res.end();
         return;
@@ -36,13 +36,13 @@ export const httpPostLogin: RequestHandler = async (ctx) => {
         return;
     }
 
-    const allowedGotos = new Set<string>(['/dashboard', '/dashboard/casino']);
+    const allowedGotos = new Set<string>(['/app', '/app/casino']);
 
     let goto = url.searchParams.get('goto') ?? null;
     if (goto && !allowedGotos.has(goto)) {
         goto = null;
     }
-    goto = goto ?? '/dashboard';
+    goto = goto ?? '/app';
 
     res.writeHead(httpStatus.seeOther, {
         location: goto,

@@ -18,8 +18,8 @@ export default function Header() {
                     {!username ? (
                         <a href="/login">{t(lang, 'headerLogin')}</a>
                     ) : (
-                        <a href="/dashboard">
-                            {t(lang, 'headerDashboard')} ({username})
+                        <a href="/app">
+                            {t(lang, 'headerApp')} ({username})
                         </a>
                     )}
                 </li>

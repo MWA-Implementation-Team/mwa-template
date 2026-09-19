@@ -2,17 +2,17 @@ import { cookieUsername } from '#src/client/constants.js';
 import { httpStatus } from '#src/http.js';
 import { RequestContext, RequestHandler, writePage } from '#src/router.js';
 
-export const httpDashboardGet: RequestHandler = async (ctx) => {
+export const httpAppGet: RequestHandler = async (ctx) => {
     if (!ensureLoggedIn(ctx)) return;
 
     writePage({
         ctx,
-        id: 'dashboard',
+        id: 'appHome',
         props: {},
     });
 };
 
-export const httpDashboardPost: RequestHandler = async ({ res }) => {
+export const httpAppPost: RequestHandler = async ({ res }) => {
     res.writeHead(httpStatus.seeOther, {
         location: '/login',
         'set-cookie': `${cookieUsername}=; Max-Age=0; Path=/`,
@@ -20,7 +20,7 @@ export const httpDashboardPost: RequestHandler = async ({ res }) => {
     res.end();
 };
 
-export const httpDashboardCasinoGet: RequestHandler = async (ctx) => {
+export const httpAppCasinoGet: RequestHandler = async (ctx) => {
     if (!ensureLoggedIn(ctx)) return;
 
     writePage({

@@ -7,15 +7,15 @@ export type Language = {
 
     titleHome: string;
     titleLogin: string;
-    titleDashboard: string;
+    titleApp: string;
     titleCasino: string;
     titleError: string;
 
     headerHome: string;
     headerLogin: string;
-    headerDashboard: string;
+    headerApp: string;
 
-    dashboardWelcome: string;
+    appWelcome: string;
 };
 
 export const languages: Record<LanguageCode, Language> = {
@@ -24,30 +24,30 @@ export const languages: Record<LanguageCode, Language> = {
 
         titleHome: 'MWA | Home',
         titleLogin: 'MWA | Login',
-        titleDashboard: 'MWA | Dashboard',
+        titleApp: 'MWA | App',
         titleCasino: 'MWA | Casino',
         titleError: 'MWA | {status}',
 
         headerHome: 'Home',
         headerLogin: 'Login',
-        headerDashboard: 'Dashboard',
+        headerApp: 'App',
 
-        dashboardWelcome: 'Welcome back, {name}',
+        appWelcome: 'Welcome back, {name}',
     },
     lt: {
         displayName: 'Lietuvių',
 
         titleHome: 'MWA | Pradžia',
         titleLogin: 'MWA | Prisijungimas',
-        titleDashboard: 'MWA | Dešbordas',
+        titleApp: 'MWA | Programa',
         titleCasino: 'MWA | Kazino',
         titleError: 'MWA | {status}',
 
         headerHome: 'Pradžia',
         headerLogin: 'Prisijungimas',
-        headerDashboard: 'Dešbordas',
+        headerApp: 'Programa',
 
-        dashboardWelcome: 'Sveiki sugrįžę, {name}',
+        appWelcome: 'Sveiki sugrįžę, {name}',
     },
 };
 

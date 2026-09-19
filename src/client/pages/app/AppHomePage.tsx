@@ -4,26 +4,26 @@ import { useContext } from 'preact/hooks';
 import { ClientContext } from '#src/client/context.js';
 import { t } from '#src/client/language.js';
 
-type DashboardPageProps = {};
+type AppHomePageProps = {};
 
-export const dashboardPage: Page<DashboardPageProps> = {
-    Component: DashboardPage,
-    title: (lang) => t(lang, 'titleDashboard'),
+export const appHomePage: Page<AppHomePageProps> = {
+    Component: AppHomePage,
+    title: (lang) => t(lang, 'titleApp'),
 };
 
-function DashboardPage({}: DashboardPageProps) {
+function AppHomePage({}: AppHomePageProps) {
     const { lang, username } = useContext(ClientContext);
 
     return (
         <>
             <Header />
 
-            <h1>{t(lang, 'dashboardWelcome', { name: username! })}</h1>
+            <h1>{t(lang, 'appWelcome', { name: username! })}</h1>
             <form method="POST">
                 <button type="submit">Logout</button>
             </form>
 
-            <a href="/dashboard/casino">
+            <a href="/app/casino">
                 <button>GO GAMBLING</button>
             </a>
         </>

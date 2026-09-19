@@ -10,11 +10,7 @@ import {
 } from '#src/router.js';
 import { publicNodeModules } from '#src/root.js';
 import { httpGetLogin, httpPostLogin } from '#src/routes/login.js';
-import {
-    httpDashboardCasinoGet,
-    httpDashboardGet,
-    httpDashboardPost,
-} from '#src/routes/dashboard.js';
+import { httpAppCasinoGet, httpAppGet, httpAppPost } from '#src/routes/app.js';
 import { httpHomeGet } from '#src/routes/home.js';
 import { cookieLanguage, cookieUsername } from '#src/client/constants.js';
 import { defaultLanguage, LanguageCode } from './client/language.js';
@@ -27,9 +23,9 @@ const rootHandler = createRouterHandler([
     endpoint('GET /login', httpGetLogin),
     endpoint('POST /login', httpPostLogin),
 
-    endpoint('GET /dashboard', httpDashboardGet),
-    endpoint('POST /dashboard', httpDashboardPost),
-    endpoint('GET /dashboard/casino', httpDashboardCasinoGet),
+    endpoint('GET /app', httpAppGet),
+    endpoint('POST /app', httpAppPost),
+    endpoint('GET /app/casino', httpAppCasinoGet),
 
     publicNodeModules,
     staticFileHandler('static'),
