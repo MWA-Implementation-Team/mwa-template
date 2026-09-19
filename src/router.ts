@@ -78,14 +78,14 @@ export function staticFileHandler(dir: string, prefix: string = '/'): RequestHan
 
 export function writePage<P extends RegisteredPageId>(args: {
     ctx: RequestContext;
-    pageId: P;
+    id: P;
     props: RegisteredPageProps<P>;
     extraHeaders?: OutgoingHttpHeaders;
     status?: number;
 }) {
     const root = Root({
-        pageId: args.pageId,
-        props: args.props,
+        pageId: args.id,
+        pageProps: args.props,
         ctxInit: args.ctx.clientCtxInit,
         themeOverride: args.ctx.cookies[cookieThemeOverride] ?? null,
     });
@@ -100,7 +100,7 @@ export function writePage<P extends RegisteredPageId>(args: {
 export function writeErrorPage(ctx: RequestContext, status: number) {
     writePage({
         ctx,
-        pageId: 'error',
+        id: 'error',
         props: { status },
         status,
     });

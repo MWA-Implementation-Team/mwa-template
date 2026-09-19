@@ -7,7 +7,7 @@ export const httpDashboardGet: RequestHandler = async (ctx) => {
 
     writePage({
         ctx,
-        pageId: 'dashboard',
+        id: 'dashboard',
         props: {},
     });
 };
@@ -25,7 +25,7 @@ export const httpDashboardCasinoGet: RequestHandler = async (ctx) => {
 
     writePage({
         ctx,
-        pageId: 'casino',
+        id: 'casino',
         props: {},
     });
 };

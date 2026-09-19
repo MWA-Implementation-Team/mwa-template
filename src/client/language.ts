@@ -5,6 +5,12 @@ export const defaultLanguage: LanguageCode = 'en';
 export type Language = {
     displayName: string;
 
+    titleHome: string;
+    titleLogin: string;
+    titleDashboard: string;
+    titleCasino: string;
+    titleError: string;
+
     headerHome: string;
     headerLogin: string;
     headerDashboard: string;
@@ -16,6 +22,12 @@ export const languages: Record<LanguageCode, Language> = {
     en: {
         displayName: 'English',
 
+        titleHome: 'MWA | Home',
+        titleLogin: 'MWA | Login',
+        titleDashboard: 'MWA | Dashboard',
+        titleCasino: 'MWA | Casino',
+        titleError: 'MWA | {status}',
+
         headerHome: 'Home',
         headerLogin: 'Login',
         headerDashboard: 'Dashboard',
@@ -24,6 +36,12 @@ export const languages: Record<LanguageCode, Language> = {
     },
     lt: {
         displayName: 'Lietuvių',
+
+        titleHome: 'MWA | Pradžia',
+        titleLogin: 'MWA | Prisijungimas',
+        titleDashboard: 'MWA | Dešbordas',
+        titleCasino: 'MWA | Kazino',
+        titleError: 'MWA | {status}',
 
         headerHome: 'Pradžia',
         headerLogin: 'Prisijungimas',

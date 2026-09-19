@@ -23,20 +23,21 @@ export const publicNodeModules: RequestHandler = async ({ url, res }) => {
 };
 
 type RootProps<P extends RegisteredPageId> = {
-    pageId: P;
-    props: RegisteredPageProps<P>;
+    pageId: RegisteredPageId;
+    pageProps: RegisteredPageProps<P>;
     ctxInit: ClientContextWrapperInit;
     themeOverride: string | null;
 };
 
 export function Root<P extends RegisteredPageId>({
     pageId,
-    props,
+    pageProps,
     ctxInit,
     themeOverride,
 }: RootProps<P>) {
     // Instead of using a bundler, use the browser's native js module support for simplicity
-    const imports = {
+    // https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/script/type/importmap
+    const importmap = {
         imports: {
             '#src/': '/',
             preact: '/preact.module.js',
@@ -51,19 +52,19 @@ export function Root<P extends RegisteredPageId>({
     import { ClientContextWrapper } from '#src/client/context.js';
 
     const Component = registeredPages[${JSON.stringify(pageId)}].Component;
-    const content = createElement(Component, ${JSON.stringify(props)});
-    const wrapped = createElement(ClientContextWrapper, { init: ${JSON.stringify(ctxInit)}, content });
+    const content = createElement(Component, ${JSON.stringify(pageProps)});
+    const wrapped = createElement(ClientContextWrapper, {
+        pageId: ${JSON.stringify(pageId)},
+        pageProps: ${JSON.stringify(pageProps)},
+        init: ${JSON.stringify(ctxInit)},
+        content
+    });
     hydrate(wrapped, document.getElementById('app'));
     `;
 
     const page = registeredPages[pageId] as Page<RegisteredPageProps<P>>;
 
-    let title = '';
-    if (typeof page.title === 'string') {
-        title = page.title;
-    } else {
-        title = page.title(props);
-    }
+    const title = page.title(ctxInit.lang, pageProps);
 
     let bodyStyle = undefined;
     if (themeOverride) {
@@ -78,7 +79,7 @@ export function Root<P extends RegisteredPageId>({
                 <title>{title}</title>
                 <script
                     type="importmap"
-                    dangerouslySetInnerHTML={{ __html: JSON.stringify(imports) }}
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(importmap) }}
                 />
                 <script type="module" dangerouslySetInnerHTML={{ __html: ssrHydrateScript }} />
                 <link rel="stylesheet" href="/oat.css" />
@@ -89,8 +90,10 @@ export function Root<P extends RegisteredPageId>({
             <body style={bodyStyle}>
                 <div id="app">
                     <ClientContextWrapper
+                        pageId={pageId}
+                        pageProps={pageProps}
                         init={ctxInit}
-                        content={<page.Component {...(props as any)} />}
+                        content={<page.Component {...(pageProps as any)} />}
                     />
                 </div>
             </body>

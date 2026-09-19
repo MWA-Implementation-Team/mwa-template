@@ -15,7 +15,7 @@ export const httpGetLogin: RequestHandler = async (ctx) => {
 
     writePage({
         ctx,
-        pageId: 'login',
+        id: 'login',
         props: {},
     });
 };
@@ -28,7 +28,7 @@ export const httpPostLogin: RequestHandler = async (ctx) => {
     if (typeof username !== 'string' || username.trim() === '') {
         writePage({
             ctx,
-            pageId: 'login',
+            id: 'login',
             props: {
                 errorMessage: 'Invalid username',
             },

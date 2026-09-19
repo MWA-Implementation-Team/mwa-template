@@ -1,6 +1,7 @@
 import { useState } from 'preact/hooks';
 import Header from '#src/client/ui/Header.js';
 import { Page } from '#src/client/pages.js';
+import { t } from '../language.js';
 
 type HomePageProps = {
     visitCount: number;
@@ -8,7 +9,7 @@ type HomePageProps = {
 
 export const homePage: Page<HomePageProps> = {
     Component: HomePage,
-    title: 'MWA | Home',
+    title: (lang) => t(lang, 'titleHome'),
 };
 
 function HomePage({ visitCount }: HomePageProps) {

@@ -7,7 +7,7 @@ export const httpHomeGet: RequestHandler = async (ctx) => {
 
     writePage({
         ctx,
-        pageId: 'home',
+        id: 'home',
         props: {
             visitCount,
         },

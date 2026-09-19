@@ -8,7 +8,7 @@ type DashboardPageProps = {};
 
 export const dashboardPage: Page<DashboardPageProps> = {
     Component: DashboardPage,
-    title: 'MWA | Dashboard',
+    title: (lang) => t(lang, 'titleDashboard'),
 };
 
 function DashboardPage({}: DashboardPageProps) {

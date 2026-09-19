@@ -1,4 +1,5 @@
 import { Page } from '#src/client/pages.js';
+import { t } from '../language.js';
 
 type ErrorPageProps = {
     status: number;
@@ -6,7 +7,7 @@ type ErrorPageProps = {
 
 export const errorPage: Page<ErrorPageProps> = {
     Component: ErrorPage,
-    title: ({ status }) => `MWA | ${status}`,
+    title: (lang, { status }) => t(lang, 'titleError', { status: `${status}` }),
 };
 
 function ErrorPage({ status }: ErrorPageProps) {
