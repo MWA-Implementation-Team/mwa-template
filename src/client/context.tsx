@@ -44,7 +44,7 @@ export function ClientContextWrapper<P extends RegisteredPageId>({
         const page = registeredPages[pageId] as Page<RegisteredPageProps<P>>;
         const title = page.title(lang, pageProps);
         document.title = title;
-    }, [init, lang]);
+    }, [pageId, pageProps, lang]);
 
     const value: ClientContextType = useMemo(
         () => ({
