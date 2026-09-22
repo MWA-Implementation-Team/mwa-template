@@ -1,76 +1,55 @@
-import { createServer } from 'http';
-import { httpStatus, readCookies } from '#src/http.js';
 import { isDevMode } from '#src/state.js';
-import {
-    createRouterHandler,
-    endpoint,
-    RequestContext,
-    staticFileHandler,
-    writeErrorPage,
-} from '#src/router.js';
-import { publicNodeModules } from '#src/root.js';
-import { httpGetLogin, httpPostLogin } from '#src/routes/login.js';
-import { httpAppCasinoGet, httpAppGet, httpAppPost } from '#src/routes/app.js';
-import { httpHomeGet } from '#src/routes/home.js';
-import { cookieLanguage, cookieUsername } from '#src/client/constants.js';
-import { defaultLanguage, LanguageCode } from './client/language.js';
+import { registerNodeModulesRoutes, writeErrorPage } from '#src/pages.js';
+import { registerLoginRoutes } from '#src/routes/login.js';
+import { registerAppRoutes } from '#src/routes/app.js';
+import { registerHomeRoutes } from '#src/routes/home.js';
+import { Hono } from 'hono';
+import { serve } from '@hono/node-server';
+import { serveStatic } from '@hono/node-server/serve-static';
 
-// Every handler in this array is ran for every http request,
-// until one of them sends a response. Otherwise, 404 is returned.
-const rootHandler = createRouterHandler([
-    endpoint('GET /', httpHomeGet),
+const app = new Hono();
 
-    endpoint('GET /login', httpGetLogin),
-    endpoint('POST /login', httpPostLogin),
+registerHomeRoutes(app);
+registerLoginRoutes(app);
+registerAppRoutes(app);
 
-    endpoint('GET /app', httpAppGet),
-    endpoint('POST /app', httpAppPost),
-    endpoint('GET /app/casino', httpAppCasinoGet),
+registerNodeModulesRoutes(app);
 
-    publicNodeModules,
-    staticFileHandler('static'),
-    staticFileHandler('dist/client', '/client'),
-
-    ...(isDevMode ? [staticFileHandler('src', '/src')] : []),
-]);
-
-const server = createServer(async (req, res) => {
-    const url = new URL(`http://${process.env.HOST ?? 'localhost'}${req.url}`);
-    const ctx: RequestContext = {
-        url,
-        req,
-        res,
-        cookies: {},
-        clientCtxInit: {
-            lang: defaultLanguage,
-            username: null,
-        },
-    };
-
-    try {
-        ctx.cookies = readCookies(req);
-        ctx.clientCtxInit = {
-            lang: (ctx.cookies[cookieLanguage] as LanguageCode) ?? defaultLanguage, // not validated
-            username: ctx.cookies[cookieUsername] ?? null,
-        };
-
-        await rootHandler(ctx);
-
-        if (!res.writableEnded) {
-            writeErrorPage(ctx, httpStatus.notFound);
+if (isDevMode) {
+    app.use('/*', serveStatic({ root: './' }));
+} else {
+    app.use('/client/*', async (c, next) => {
+        if (c.req.path.endsWith('.js.map')) {
+            // don't send sourcemaps in production
+            return c.notFound();
         }
-    } catch (err) {
-        console.error('Error during request', err);
-        writeErrorPage(ctx, httpStatus.internalServerError);
-    }
+        await next();
+    });
+}
+
+app.use('/*', serveStatic({ root: './static' }));
+app.use('/client/*', serveStatic({ root: './dist' }));
+
+app.notFound(async (ctx) => {
+    return writeErrorPage(ctx, 404);
 });
 
+app.onError(async (error, ctx) => {
+    console.error('Error during request', error);
+    return writeErrorPage(ctx, 500);
+});
+
+const server = serve(
+    {
+        port: 3000,
+        ...app,
+    },
+    (info) => {
+        let msg = `Server running at http://localhost:${info.port}`;
+        if (isDevMode) {
+            msg += ' (dev mode)';
+        }
+        console.log(msg);
+    },
+);
 process.on('SIGINT', () => server.close());
-
-server.listen(3000, () => {
-    let msg = 'Server running at http://localhost:3000/';
-    if (isDevMode) {
-        msg += ' (dev mode)';
-    }
-    console.log(msg);
-});

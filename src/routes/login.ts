@@ -1,52 +1,36 @@
 import { cookieUsername } from '#src/client/constants.js';
-import { httpStatus, readFormData } from '#src/http.js';
-import { RequestHandler, writePage } from '#src/router.js';
+import { writePage } from '#src/pages.js';
+import { Hono } from 'hono';
+import { getCookie, setCookie } from 'hono/cookie';
 
-export const httpGetLogin: RequestHandler = async (ctx) => {
-    const { res, cookies } = ctx;
+export function registerLoginRoutes(app: Hono) {
+    app.get('/login', async (ctx) => {
+        if (getCookie(ctx, cookieUsername)) {
+            return ctx.redirect('/app');
+        }
 
-    if (cookieUsername in cookies) {
-        res.writeHead(httpStatus.seeOther, {
-            location: '/app',
-        });
-        res.end();
-        return;
-    }
-
-    writePage({
-        ctx,
-        id: 'login',
-        props: {},
+        return writePage(ctx, 'login', {});
     });
-};
 
-export const httpPostLogin: RequestHandler = async (ctx) => {
-    const { url, req, res } = ctx;
+    app.post('/login', async (ctx) => {
+        const form = await ctx.req.formData();
 
-    const form = await readFormData(req);
-    let username = form.get('username');
-    if (typeof username !== 'string' || username.trim() === '') {
-        writePage({
-            ctx,
-            id: 'login',
-            props: {
+        let username = form.get('username');
+        if (typeof username !== 'string' || username.trim() === '') {
+            return writePage(ctx, 'login', {
                 errorMessage: 'Invalid username',
-            },
-        });
-        return;
-    }
+            });
+        }
 
-    const allowedGotos = new Set<string>(['/app', '/app/casino']);
+        const allowedGotos = new Set<string>(['/app', '/app/casino']);
 
-    let goto = url.searchParams.get('goto') ?? null;
-    if (goto && !allowedGotos.has(goto)) {
-        goto = null;
-    }
-    goto = goto ?? '/app';
+        let goto = ctx.req.query('goto') ?? null;
+        if (goto && !allowedGotos.has(goto)) {
+            goto = null;
+        }
+        goto = goto ?? '/app';
 
-    res.writeHead(httpStatus.seeOther, {
-        location: goto,
-        'set-cookie': `${cookieUsername}=${encodeURIComponent(username)};`,
+        setCookie(ctx, cookieUsername, username);
+        return ctx.redirect(goto);
     });
-    res.end();
-};
+}

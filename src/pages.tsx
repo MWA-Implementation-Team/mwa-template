@@ -1,26 +1,56 @@
-import { readFile } from 'fs/promises';
 import { Page, RegisteredPageId, RegisteredPageProps, registeredPages } from '#src/client/pages.js';
 import { isDevMode } from '#src/state.js';
-import { getContentTypeForFile, httpStatus } from '#src/http.js';
-import { RequestHandler } from '#src/router.js';
 import { ClientContextWrapper, ClientContextWrapperInit } from '#src/client/context.js';
+import { Hono } from 'hono';
+import { serveStatic } from '@hono/node-server/serve-static';
+import { renderToString } from 'preact-render-to-string';
+import { cookieLanguage, cookieThemeOverride, cookieUsername } from './client/constants.js';
+import { Context } from 'hono';
+import { getCookie } from 'hono/cookie';
+import { defaultLanguage, LanguageCode } from './client/language.js';
+import { StatusCode } from 'hono/utils/http-status';
 
-export const publicNodeModules: RequestHandler = async ({ url, res }) => {
-    const map: Record<string, string> = {
-        '/preact.module.js': 'node_modules/preact/dist/preact.module.js',
-        '/preact-hooks.module.js': 'node_modules/preact/hooks/dist/hooks.module.js',
-        '/preact-jsx-runtime.module.js':
-            'node_modules/preact/jsx-runtime/dist/jsxRuntime.module.js',
+export function writePage<P extends RegisteredPageId>(
+    ctx: Context,
+    id: P,
+    props: RegisteredPageProps<P>,
+): Response {
+    const ctxInit: ClientContextWrapperInit = {
+        lang: (getCookie(ctx, cookieLanguage) as LanguageCode) ?? defaultLanguage, // not validated
+        username: getCookie(ctx, cookieUsername) ?? null,
     };
 
-    if (url.pathname in map) {
-        const buf = await readFile(map[url.pathname]);
-        res.writeHead(httpStatus.ok, {
-            'Content-Type': getContentTypeForFile(url.pathname),
-        });
-        res.end(buf);
-    }
-};
+    const root = Root({
+        pageId: id,
+        pageProps: props,
+        ctxInit,
+        themeOverride: getCookie(ctx, cookieThemeOverride) ?? null,
+    });
+
+    return ctx.html('<!DOCTYPE html>' + renderToString(root));
+}
+
+export function writeErrorPage(ctx: Context, status: StatusCode): Response {
+    ctx.status(status);
+    return writePage(ctx, 'error', { status });
+}
+
+export function registerNodeModulesRoutes(app: Hono) {
+    app.get(
+        '/preact.module.js',
+        serveStatic({ path: 'node_modules/preact/dist/preact.module.js' }),
+    );
+
+    app.get(
+        '/preact-hooks.module.js',
+        serveStatic({ path: 'node_modules/preact/hooks/dist/hooks.module.js' }),
+    );
+
+    app.get(
+        '/preact-jsx-runtime.module.js',
+        serveStatic({ path: 'node_modules/preact/jsx-runtime/dist/jsxRuntime.module.js' }),
+    );
+}
 
 type RootProps<P extends RegisteredPageId> = {
     pageId: RegisteredPageId;

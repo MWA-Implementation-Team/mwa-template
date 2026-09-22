@@ -1,43 +1,30 @@
 import { cookieUsername } from '#src/client/constants.js';
-import { httpStatus } from '#src/http.js';
-import { RequestContext, RequestHandler, writePage } from '#src/router.js';
+import { writePage } from '#src/pages.js';
+import { Hono } from 'hono';
+import { deleteCookie, getCookie } from 'hono/cookie';
+import { Context } from 'hono';
 
-export const httpAppGet: RequestHandler = async (ctx) => {
-    if (!ensureLoggedIn(ctx)) return;
+export function registerAppRoutes(app: Hono) {
+    app.get('/app', async (ctx) => {
+        const username = getCookie(ctx, cookieUsername);
+        if (!username) return goLogin(ctx);
 
-    writePage({
-        ctx,
-        id: 'appHome',
-        props: {},
+        return writePage(ctx, 'appHome', {});
     });
-};
 
-export const httpAppPost: RequestHandler = async ({ res }) => {
-    res.writeHead(httpStatus.seeOther, {
-        location: '/login',
-        'set-cookie': `${cookieUsername}=; Max-Age=0; Path=/`,
+    app.post('/app', async (ctx) => {
+        deleteCookie(ctx, cookieUsername);
+        return ctx.redirect('/login', 303);
     });
-    res.end();
-};
 
-export const httpAppCasinoGet: RequestHandler = async (ctx) => {
-    if (!ensureLoggedIn(ctx)) return;
+    app.get('/app/casino', async (ctx) => {
+        const username = getCookie(ctx, cookieUsername);
+        if (!username) return goLogin(ctx);
 
-    writePage({
-        ctx,
-        id: 'casino',
-        props: {},
+        return writePage(ctx, 'casino', {});
     });
-};
+}
 
-function ensureLoggedIn({ url, res, cookies }: RequestContext): string | null {
-    const username = cookies[cookieUsername];
-    if (!username) {
-        res.writeHead(httpStatus.seeOther, {
-            location: `/login?goto=${encodeURIComponent(url.pathname)}`,
-        });
-        res.end();
-        return null;
-    }
-    return username;
+function goLogin(ctx: Context): Response {
+    return ctx.redirect(`/login?goto=${encodeURIComponent(ctx.req.path)}`, 303);
 }

@@ -1,15 +1,12 @@
 import { getVisitCount, markVisit } from '#src/database.js';
-import { RequestHandler, writePage } from '#src/router.js';
+import { writePage } from '#src/pages.js';
+import { Hono } from 'hono';
 
-export const httpHomeGet: RequestHandler = async (ctx) => {
-    markVisit();
-    const visitCount = getVisitCount();
+export function registerHomeRoutes(app: Hono) {
+    app.get('/', (ctx) => {
+        markVisit();
+        const visitCount = getVisitCount();
 
-    writePage({
-        ctx,
-        id: 'home',
-        props: {
-            visitCount,
-        },
+        return writePage(ctx, 'home', { visitCount });
     });
-};
+}
