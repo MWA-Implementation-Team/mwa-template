@@ -1,5 +1,6 @@
 import { t } from '#src/client/language.js';
 import { Page } from '#src/client/pages.js';
+import RollComponent from '#src/client/ui/Roll.js';
 
 type CasinoPageProps = {};
 
@@ -11,7 +12,7 @@ export const casinoPage: Page<CasinoPageProps> = {
 function CasinoPage({}: CasinoPageProps) {
     return (
         <>
-            <h1>TODO</h1>
+            <RollComponent />
         </>
     );
 }
